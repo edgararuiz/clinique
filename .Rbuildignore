@@ -3,3 +3,4 @@
 ^CLAUDE\.md$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^[.]?air[.]toml$
