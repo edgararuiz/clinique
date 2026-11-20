@@ -1,6 +1,10 @@
 ^LICENSE\.md$
 ^\.github$
-^CLAUDE\.md$
+^\.claude$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^[.]?air[.]toml$
+^README\.Rmd$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
