@@ -16,14 +16,16 @@ column names.
    https://cdn.clinicaltrials.gov/large-docs/70/NCT03399370/SAP_001.pdf
 2. FDA statistical review (demographics in Table 5):
    https://www.accessdata.fda.gov/drugsatfda_docs/nda/2022/214012Orig1s000StatR.pdf
-3. NEJM paper (treatment effect): https://doi.org/10.1056/NEJMoa1912387
+3. NEJM paper: https://doi.org/10.1056/NEJMoa1912387. Its Supplementary
+   Appendix (Figure S3, the spread of each subject's Day 510 change) and
+   the protocol are in `sources/`. The main paper itself was not read.
 
 ## Design
 
 ### The function
 
 ```r
-ldl_simulate(n, study = c("orion10"))
+simulate_ldl(n, study = c("orion10"))
 ```
 
 1. `n` is the number of subjects, randomized 1:1. It has no default, so the
@@ -49,8 +51,10 @@ One row per subject per scheduled visit:
 
 ### How LDL is simulated
 
-Numbers marked "FDA review" or "SAP" are verified against the local copies
-in `sources/`. Numbers marked "placeholder" are not; step 1 replaces them.
+Every number below is labelled with where it came from. "Read by eye"
+means it was read off a published figure, to about ±1 point for means and
+±0.05 for SDs. "Assumed" means no public source gives it. The local copies
+of all sources are in `.github/planning/sources/`.
 
 1. Baseline LDL from a right-skewed distribution matching the published
    baseline mean and spread. A log-normal fits: LDL can't go below zero and
@@ -65,88 +69,117 @@ in `sources/`. Numbers marked "placeholder" are not; step 1 replaces them.
    ldl_baseline <- rlnorm(n, meanlog, sdlog)
    ```
 
-2. Mean percent change per visit and arm, following the published curves:
-   inclisiran falls after the first dose and stays near its low point;
-   placebo stays near zero. One vector per arm, one value per visit.
+2. Mean percent change per visit and arm. The targets are the observed
+   means in Figure 2 of the FDA review (ORION-10 panel, PDF page 57),
+   read by eye. They are not Table 10's values, which include imputed
+   values for missing data; the simulation has no missing data, so it
+   matches what was observed.
 
-   Doses are on Days 1, 90, 270 and 450. Days 150, 330 and 510 fall 60
-   days after a dose, near the low point, so the drop is deepest there.
-   Days 270, 450 and 540 fall 90 to 180 days after a dose, as the effect
-   wears off.
-
-   Two published numbers per arm fix the values (FDA review Table 10):
-   the Day 510 value, and the time-adjusted value, which the SAP defines as
-   the average over the six visits (Section 6.4.6.1). The other visits are
-   placeholders, chosen so the averages match. The NEJM paper's
-   by-visit figure would replace them.
+   Doses are on Days 1, 90, 270 and 450, which gives the sawtooth: the
+   drop is deepest 60 days after a dose (Days 150, 330, 510) and weaker
+   just before the next dose (Days 270, 450).
 
    ```r
-   # Days:          150    270    330    450    510    540
-   mu_inclisiran <- c(-53.0, -50.0, -53.0, -50.0, -51.4, -50.4)
-   mu_placebo    <- c(  3.0,   3.0,   3.0,   2.5,   1.0,   2.5)
-   # Day 510: -51.4 and 1.0 (FDA review). Averages: -51.3 and 2.5 (FDA review).
+   # Days:            150    270    330    450    510    540
+   mu_inclisiran <- c(-59.4, -48.3, -56.0, -46.0, -56.3, -53.8)  # read by eye
+   mu_placebo    <- c(  1.2,   4.8,   5.8,   3.0,   1.4,   1.8)  # read by eye
    ```
 
-3. Within-subject correlation across visits, from a multivariate normal with
-   an unstructured covariance, so an MMRM is the right model for it.
+3. Within-subject correlation across visits, from a multivariate normal
+   with an unstructured covariance, so an MMRM is the right model for it.
 
    The draws are on the log scale of the ratio LDL / baseline, not on
    percent change directly. A normal draw of percent change can fall below
    -100%, which gives a negative LDL; a ratio of `exp(x)` is always
    positive. For example, a log ratio of -0.69 is a ratio of 0.5, a -50%
-   change.
+   change. Figure S3 of the NEJM appendix supports this: each subject's
+   observed Day 510 change is right-skewed in both arms.
 
-   The covariance is built from an SD per visit and a correlation matrix,
-   where nearer visits correlate more. Each subject's row of deviations is
-   added to their arm's means, then converted back to percent change:
+   The SD per arm comes from the quartiles in Figure S3, Panel B (NEJM
+   appendix, PDF page 24), read by eye and converted to the log scale:
+
+   1. Placebo: quartiles about +11%, -5% and -16%, so a log-scale SD of
+      about 0.21.
+   2. Inclisiran: quartiles about -43%, -59% and -72%, so a log-scale SD
+      of about 0.53.
+
+   The figure only covers Day 510, so the same SD is used at every visit
+   (assumed). Correlation between visits is assumed: 0.7 for visits 180
+   days apart, higher for nearer visits, lower for farther ones.
+
+   Averaging after `exp()` pulls the mean percent change up, so the
+   log-scale means are shifted down by `sd^2 / 2`. With that shift, the
+   expected percent change equals the target exactly.
 
    ```r
-   mu_log <- log(1 + rbind(mu_inclisiran, mu_placebo) / 100)
-
-   visit_sd <- c(0.30, 0.32, 0.32, 0.34, 0.34, 0.35)  # log scale, placeholders
    day <- c(150, 270, 330, 450, 510, 540)
-   r <- 0.7^(abs(outer(day, day, "-")) / 180)  # placeholder shape
-   sigma <- diag(visit_sd) %*% r %*% diag(visit_sd)
+   r <- 0.7^(abs(outer(day, day, "-")) / 180)  # assumed
+   arm_sd <- c(Inclisiran = 0.53, Placebo = 0.21)  # read by eye
 
    arm <- sample(rep(c("Inclisiran", "Placebo"), length.out = n))
-   mu <- mu_log[match(arm, c("Inclisiran", "Placebo")), ]
-   log_ratio <- mu + MASS::mvrnorm(n, mu = rep(0, 6), Sigma = sigma)
+   targets <- rbind(Inclisiran = mu_inclisiran, Placebo = mu_placebo)
+   mu_log <- log(1 + targets / 100) - arm_sd^2 / 2
+
+   log_ratio <- matrix(NA_real_, n, 6)
+   for (a in c("Inclisiran", "Placebo")) {
+     rows <- arm == a
+     sigma <- arm_sd[[a]]^2 * r
+     log_ratio[rows, ] <- MASS::mvrnorm(sum(rows), mu = mu_log[a, ], Sigma = sigma)
+   }
    ldl <- ldl_baseline * exp(log_ratio)
    pct_change <- 100 * (exp(log_ratio) - 1)
    ```
 
-   `MASS` ships with R, so it adds no install burden. The correlation
-   formula only sets the starting shape; the MMRM's unstructured
-   covariance doesn't assume any shape, so it will still fit.
+   The SAP's MMRM fits one covariance for both arms, while the simulation
+   gives inclisiran a wider spread. The real trial very likely had the
+   same mismatch, so this keeps the data realistic; the treatment
+   estimates stay unbiased.
 
-   One side effect: averaging after `exp()` pulls the mean percent change
-   above the target. In a test run with these placeholders, inclisiran's
-   means came out 2 to 3 points high and placebo's 4 to 7 points high.
-   Step 1 calibrates `mu` so the simulated means land on the published
-   ones.
+   `MASS` ships with R, so it adds no install burden.
 
-4. No missing values: every subject has LDL at all six visits.
+4. Demographics, from FDA review Table 5, pooled over both arms
+   (randomization makes the arm differences chance):
+
+   ```r
+   age <- round(pmin(pmax(rnorm(n, 66.1, 8.9), 35), 90))
+   # Mean 66.4 and 65.7 by arm, SD 8.9, range 35 to 90. Normal shape: assumed.
+   sex <- sample(c("Male", "Female"), n, replace = TRUE, prob = c(0.694, 0.306))
+   # 1,083 of 1,561 male.
+   race <- sample(c("White", "Black", "Other"), n, replace = TRUE,
+     prob = c(0.857, 0.126, 0.017))
+   # 1,338, 197 and 26 of 1,561.
+   ```
+
+5. No missing values: every subject has LDL at all six visits.
 
 ### Check
 
 A test fits the SAP's MMRM with the `mmrm` package
 (`ldl_pct_change ~ treatment * visit + ldl_baseline`, unstructured
-covariance, Kenward-Roger) and checks two treatment differences against
-the FDA review (Table 10):
+covariance, Kenward-Roger) to `simulate_ldl(1561)` and checks two
+treatment differences against the Figure 2 targets:
 
-1. Time-adjusted: the average of the six visit differences, near -53.9.
+1. Time-adjusted (the average of the six visit differences): about -56.3.
    The MMRM is the SAP's primary analysis for this endpoint.
-2. Day 510: near -52.3. The SAP's primary analysis for this endpoint is an
-   ANCOVA on Day 510 alone; the MMRM is one of its sensitivity analyses
-   (Section 6.4.6.1).
+2. Day 510: about -57.7. The SAP's primary analysis for this endpoint is
+   an ANCOVA on Day 510 alone; the MMRM is one of its sensitivity analyses
+   (SAP Section 6.4.6.1).
+
+The published values with imputation are smaller, -53.9 and -52.3 (FDA
+review Table 10). The docs should say why the simulation differs.
 
 ## Steps
 
-1. Pull the remaining target numbers from the sources: percent change at
-   the visits other than Day 510, the SD and correlation across visits,
-   and demographics.
-2. Write `ldl_simulate()` in `R/ldl-simulate.R`.
-3. Add the MMRM test.
-4. Document the function, citing the sources. Say the data is simulated
-   and not affiliated with or endorsed by the trial's sponsor.
-5. Update the README with an example that fits the model.
+1. Write `simulate_ldl()` in `R/simulate-ldl.R`.
+2. Add the MMRM test.
+3. Document the function briefly, citing the sources and linking to the
+   vignette. Say the data is simulated and not affiliated with or endorsed
+   by the trial's sponsor.
+4. Add a vignette, `vignettes/orion10.Rmd`, that walks through the
+   simulation approach: the sources and which numbers came from each, the
+   by-eye readings and assumptions, the log-ratio scale, why the targets
+   are Figure 2 and not Table 10, and fitting the SAP's MMRM to the
+   result. Add `knitr`, `rmarkdown`, `mmrm` and `emmeans` to Suggests and
+   `VignetteBuilder: knitr` to DESCRIPTION.
+5. Update the README with a short example that fits the model and links
+   to the vignette.
