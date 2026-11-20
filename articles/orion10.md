@@ -43,20 +43,20 @@ library(clinique)
 set.seed(1)
 ldl <- simulate_ldl(1561)
 head(ldl)
-#>   subject_id  treatment age  sex  race   visit day ldl_baseline      ldl
-#> 1   001-0001 Inclisiran  78 Male White Day 150 150     84.68047 25.36234
-#> 2   001-0001 Inclisiran  78 Male White Day 270 270     84.68047 39.64797
-#> 3   001-0001 Inclisiran  78 Male White Day 330 330     84.68047 23.01864
-#> 4   001-0001 Inclisiran  78 Male White Day 450 450     84.68047 30.83611
-#> 5   001-0001 Inclisiran  78 Male White Day 510 510     84.68047 15.58256
-#> 6   001-0001 Inclisiran  78 Male White Day 540 540     84.68047 18.90423
-#>   ldl_pct_change
-#> 1      -70.04937
-#> 2      -53.17932
-#> 3      -72.81706
-#> 4      -63.58534
-#> 5      -81.59841
-#> 6      -77.67581
+#>   subject_id  treatment age  sex  race   visit day ldl_baseline
+#> 1   001-0001 Inclisiran  78 Male White Day 150 150     84.68047
+#> 2   001-0001 Inclisiran  78 Male White Day 270 270     84.68047
+#> 3   001-0001 Inclisiran  78 Male White Day 330 330     84.68047
+#> 4   001-0001 Inclisiran  78 Male White Day 450 450     84.68047
+#> 5   001-0001 Inclisiran  78 Male White Day 510 510     84.68047
+#> 6   001-0001 Inclisiran  78 Male White Day 540 540     84.68047
+#>        ldl ldl_pct_change
+#> 1 25.36234      -70.04937
+#> 2 39.64797      -53.17932
+#> 3 23.01864      -72.81706
+#> 4 30.83611      -63.58534
+#> 5 15.58256      -81.59841
+#> 6 18.90423      -77.67581
 ```
 
 There is one row per subject per visit. The visits are Days 150, 270,

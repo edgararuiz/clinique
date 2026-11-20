@@ -108,35 +108,42 @@ statistical analysis plan is in the protocol supplement.
 set.seed(1)
 ldl <- simulate_ldl(100)
 head(ldl)
-#>   subject_id treatment age    sex  race   visit day ldl_baseline       ldl
-#> 1   001-0001   Placebo  70 Female White Day 150 150     89.60336  96.17405
-#> 2   001-0001   Placebo  70 Female White Day 270 270     89.60336 119.41800
-#> 3   001-0001   Placebo  70 Female White Day 330 330     89.60336 106.97133
-#> 4   001-0001   Placebo  70 Female White Day 450 450     89.60336 119.43851
-#> 5   001-0001   Placebo  70 Female White Day 510 510     89.60336 111.94626
-#> 6   001-0001   Placebo  70 Female White Day 540 540     89.60336 115.37867
-#>   ldl_pct_change
-#> 1       7.333092
-#> 2      33.274030
-#> 3      19.383169
-#> 4      33.296914
-#> 5      24.935342
-#> 6      28.766009
+#>   subject_id treatment age    sex  race   visit day ldl_baseline
+#> 1   001-0001   Placebo  70 Female White Day 150 150     89.60336
+#> 2   001-0001   Placebo  70 Female White Day 270 270     89.60336
+#> 3   001-0001   Placebo  70 Female White Day 330 330     89.60336
+#> 4   001-0001   Placebo  70 Female White Day 450 450     89.60336
+#> 5   001-0001   Placebo  70 Female White Day 510 510     89.60336
+#> 6   001-0001   Placebo  70 Female White Day 540 540     89.60336
+#>         ldl ldl_pct_change
+#> 1  96.17405       7.333092
+#> 2 119.41800      33.274030
+#> 3 106.97133      19.383169
+#> 4 119.43851      33.296914
+#> 5 111.94626      24.935342
+#> 6 115.37867      28.766009
 
 odyssey <- simulate_ldl(90, study = "odyssey_lt")
 head(odyssey)
-#>   subject_id  treatment age  sex  race   visit day ldl_baseline      ldl
-#> 1   001-0001 Alirocumab  62 Male White  Week 4  28     100.9234 30.09524
-#> 2   001-0001 Alirocumab  62 Male White  Week 8  56     100.9234 27.99392
-#> 3   001-0001 Alirocumab  62 Male White Week 12  84     100.9234 16.72129
-#> 4   001-0001 Alirocumab  62 Male White Week 16 112     100.9234 16.59908
-#> 5   001-0001 Alirocumab  62 Male White Week 24 168     100.9234 17.06002
-#> 6   001-0001 Alirocumab  62 Male White Week 36 252     100.9234 12.75462
-#>   ldl_pct_change hefh prior_mi_stroke statin_intensity        region
-#> 1      -70.18011   No             Yes     Low/moderate North America
-#> 2      -72.26221   No             Yes     Low/moderate North America
-#> 3      -83.43169   No             Yes     Low/moderate North America
-#> 4      -83.55279   No             Yes     Low/moderate North America
-#> 5      -83.09607   No             Yes     Low/moderate North America
-#> 6      -87.36207   No             Yes     Low/moderate North America
+#>   subject_id  treatment age  sex  race   visit day ldl_baseline
+#> 1   001-0001 Alirocumab  62 Male White  Week 4  28     100.9234
+#> 2   001-0001 Alirocumab  62 Male White  Week 8  56     100.9234
+#> 3   001-0001 Alirocumab  62 Male White Week 12  84     100.9234
+#> 4   001-0001 Alirocumab  62 Male White Week 16 112     100.9234
+#> 5   001-0001 Alirocumab  62 Male White Week 24 168     100.9234
+#> 6   001-0001 Alirocumab  62 Male White Week 36 252     100.9234
+#>        ldl ldl_pct_change hefh prior_mi_stroke statin_intensity
+#> 1 30.09524      -70.18011   No             Yes     Low/moderate
+#> 2 27.99392      -72.26221   No             Yes     Low/moderate
+#> 3 16.72129      -83.43169   No             Yes     Low/moderate
+#> 4 16.59908      -83.55279   No             Yes     Low/moderate
+#> 5 17.06002      -83.09607   No             Yes     Low/moderate
+#> 6 12.75462      -87.36207   No             Yes     Low/moderate
+#>          region
+#> 1 North America
+#> 2 North America
+#> 3 North America
+#> 4 North America
+#> 5 North America
+#> 6 North America
 ```

@@ -7,15 +7,17 @@
 <title>Simulating ORION-10 • clinique</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Simulating ORION-10">
 </head>
 <body>
-    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+    <a href="#container" class="visually-hidden-focusable">Skip to content</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-none" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">clinique</a>
 
@@ -47,7 +49,7 @@
 
 
   </div>
-</nav><div class="container template-article">
+</nav><div class="container template-article" id="container">
 
 
 
@@ -109,20 +111,20 @@ it.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">ldl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simulate_ldl.html">simulate_ldl</a></span><span class="op">(</span><span class="fl">1561</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ldl</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   subject_id  treatment age  sex  race   visit day ldl_baseline      ldl</span></span>
-<span><span class="co">#&gt; 1   001-0001 Inclisiran  78 Male White Day 150 150     84.68047 25.36234</span></span>
-<span><span class="co">#&gt; 2   001-0001 Inclisiran  78 Male White Day 270 270     84.68047 39.64797</span></span>
-<span><span class="co">#&gt; 3   001-0001 Inclisiran  78 Male White Day 330 330     84.68047 23.01864</span></span>
-<span><span class="co">#&gt; 4   001-0001 Inclisiran  78 Male White Day 450 450     84.68047 30.83611</span></span>
-<span><span class="co">#&gt; 5   001-0001 Inclisiran  78 Male White Day 510 510     84.68047 15.58256</span></span>
-<span><span class="co">#&gt; 6   001-0001 Inclisiran  78 Male White Day 540 540     84.68047 18.90423</span></span>
-<span><span class="co">#&gt;   ldl_pct_change</span></span>
-<span><span class="co">#&gt; 1      -70.04937</span></span>
-<span><span class="co">#&gt; 2      -53.17932</span></span>
-<span><span class="co">#&gt; 3      -72.81706</span></span>
-<span><span class="co">#&gt; 4      -63.58534</span></span>
-<span><span class="co">#&gt; 5      -81.59841</span></span>
-<span><span class="co">#&gt; 6      -77.67581</span></span></code></pre></div>
+<span><span class="co">#&gt;   subject_id  treatment age  sex  race   visit day ldl_baseline</span></span>
+<span><span class="co">#&gt; 1   001-0001 Inclisiran  78 Male White Day 150 150     84.68047</span></span>
+<span><span class="co">#&gt; 2   001-0001 Inclisiran  78 Male White Day 270 270     84.68047</span></span>
+<span><span class="co">#&gt; 3   001-0001 Inclisiran  78 Male White Day 330 330     84.68047</span></span>
+<span><span class="co">#&gt; 4   001-0001 Inclisiran  78 Male White Day 450 450     84.68047</span></span>
+<span><span class="co">#&gt; 5   001-0001 Inclisiran  78 Male White Day 510 510     84.68047</span></span>
+<span><span class="co">#&gt; 6   001-0001 Inclisiran  78 Male White Day 540 540     84.68047</span></span>
+<span><span class="co">#&gt;        ldl ldl_pct_change</span></span>
+<span><span class="co">#&gt; 1 25.36234      -70.04937</span></span>
+<span><span class="co">#&gt; 2 39.64797      -53.17932</span></span>
+<span><span class="co">#&gt; 3 23.01864      -72.81706</span></span>
+<span><span class="co">#&gt; 4 30.83611      -63.58534</span></span>
+<span><span class="co">#&gt; 5 15.58256      -81.59841</span></span>
+<span><span class="co">#&gt; 6 18.90423      -77.67581</span></span></code></pre></div>
 <p>There is one row per subject per visit. The visits are Days 150, 270,
 330, 450, 510 and 540. LDL was also measured on Day 90, but the SAP
 leaves Day 90 out of the model (SAP Section 6.4.6.1), so the data leaves
@@ -422,7 +424,9 @@ error.</li>
 
 
 
-    <footer><div class="pkgdown-footer-left">
+   </div>
+  <footer><div class="container">
+  <div class="pkgdown-footer-left">
   <p>Developed by Edgar Ruiz.</p>
 </div>
 
@@ -430,12 +434,6 @@ error.</li>
   <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
-    </footer>
-</div>
-
-
-
-
-
-  </body>
+  </div></footer>
+</body>
 </html>

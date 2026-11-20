@@ -53,20 +53,27 @@ library(clinique)
 set.seed(1)
 ldl <- simulate_ldl(2341, study = "odyssey_lt")
 head(ldl)
-#>   subject_id treatment age  sex  race   visit day ldl_baseline      ldl
-#> 1   001-0001   Placebo  62 Male White  Week 4  28     84.99889 64.67659
-#> 2   001-0001   Placebo  62 Male White  Week 8  56     84.99889 68.25461
-#> 3   001-0001   Placebo  62 Male White Week 12  84     84.99889 78.92457
-#> 4   001-0001   Placebo  62 Male White Week 16 112     84.99889 70.22783
-#> 5   001-0001   Placebo  62 Male White Week 24 168     84.99889 68.53246
-#> 6   001-0001   Placebo  62 Male White Week 36 252     84.99889 73.73389
-#>   ldl_pct_change hefh prior_mi_stroke statin_intensity         region
-#> 1     -23.908900   No              No     Low/moderate Eastern Europe
-#> 2     -19.699416   No              No     Low/moderate Eastern Europe
-#> 3      -7.146352   No              No     Low/moderate Eastern Europe
-#> 4     -17.377949   No              No     Low/moderate Eastern Europe
-#> 5     -19.372529   No              No     Low/moderate Eastern Europe
-#> 6     -13.253116   No              No     Low/moderate Eastern Europe
+#>   subject_id treatment age  sex  race   visit day ldl_baseline
+#> 1   001-0001   Placebo  62 Male White  Week 4  28     84.99889
+#> 2   001-0001   Placebo  62 Male White  Week 8  56     84.99889
+#> 3   001-0001   Placebo  62 Male White Week 12  84     84.99889
+#> 4   001-0001   Placebo  62 Male White Week 16 112     84.99889
+#> 5   001-0001   Placebo  62 Male White Week 24 168     84.99889
+#> 6   001-0001   Placebo  62 Male White Week 36 252     84.99889
+#>        ldl ldl_pct_change hefh prior_mi_stroke statin_intensity
+#> 1 64.67659     -23.908900   No              No     Low/moderate
+#> 2 68.25461     -19.699416   No              No     Low/moderate
+#> 3 78.92457      -7.146352   No              No     Low/moderate
+#> 4 70.22783     -17.377949   No              No     Low/moderate
+#> 5 68.53246     -19.372529   No              No     Low/moderate
+#> 6 73.73389     -13.253116   No              No     Low/moderate
+#>           region
+#> 1 Eastern Europe
+#> 2 Eastern Europe
+#> 3 Eastern Europe
+#> 4 Eastern Europe
+#> 5 Eastern Europe
+#> 6 Eastern Europe
 ```
 
 There is one row per subject per visit. The visits are Weeks 4, 8, 12,
