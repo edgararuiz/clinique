@@ -34,7 +34,8 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/orion10.html">Simulating ORION-10</a></li>
+<li><a class="dropdown-item" href="articles/odyssey-lt.html">Simulating ODYSSEY LONG TERM</a></li>
+    <li><a class="dropdown-item" href="articles/orion10.html">Simulating ORION-10</a></li>
   </ul>
 </li>
       </ul>
@@ -55,8 +56,8 @@
 </h1></div>
 <!-- badges: start -->
 <!-- badges: end -->
-<p>clinique simulates realistic clinical trial data. Each dataset is modelled on a published trial and its statistical analysis plan, so the trial’s own analysis gives results close to the published ones. Every subject is made up.</p>
-<p>The first dataset is modelled on ORION-10, a trial of inclisiran, a drug that lowers LDL cholesterol, against placebo. The data is simulated and is not affiliated with or endorsed by the trial’s sponsor.</p>
+<p>clinique gives you data shaped like a real clinical trial, so you can fit that trial’s own analysis to it. Each dataset is modelled on a published trial and its statistical analysis plan: the same visits, the same covariates, and effects that match the published results.</p>
+<p>Every subject is made up. The data is not affiliated with or endorsed by any trial’s sponsor.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -66,67 +67,107 @@
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"edgararuiz/clinique"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="available-studies">Available studies<a class="anchor" aria-label="anchor" href="#available-studies"></a>
+</h2>
+<p><code><a href="reference/simulate_ldl.html">simulate_ldl()</a></code> covers two trials of drugs that lower LDL cholesterol. Both are analyzed with a mixed model for repeated measures (MMRM), but each one teaches something different:</p>
+<table style="width:100%;" class="table">
+<colgroup>
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+</colgroup>
+<thead><tr>
+<th><code>study</code></th>
+<th>Trial</th>
+<th>Drug</th>
+<th>Subjects</th>
+<th>Design</th>
+<th>What it teaches</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>"orion10"</code></td>
+<td>ORION-10</td>
+<td>Inclisiran, twice a year</td>
+<td>1,561</td>
+<td>1:1, 6 visits over 18 months</td>
+<td>An effect that rises and falls with each dose</td>
+</tr>
+<tr>
+<td><code>"odyssey_lt"</code></td>
+<td>ODYSSEY LONG TERM</td>
+<td>Alirocumab, every two weeks</td>
+<td>2,341</td>
+<td>2:1, 7 visits over 1 year</td>
+<td>Adjusting for randomization strata, and weighting means by them</td>
+</tr>
+</tbody>
+</table>
+<p>The difference in dosing shows in the data. Inclisiran’s effect is strongest a few months after each dose and weaker just before the next. Alirocumab’s stays flat:</p>
+<p><img src="reference/figures/README-profiles-1.png" alt="Mean percent change in LDL by study day for each arm. ORION-10's inclisiran arm rises and falls between doses; ODYSSEY LONG TERM's alirocumab arm stays flat near -63%. Both placebo arms stay near zero." width="100%"></p>
+</div>
+<div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p><code><a href="reference/simulate_ldl.html">simulate_ldl()</a></code> returns one row per subject per visit, ready for the trial’s mixed model for repeated measures (MMRM):</p>
+<p>Simulate ODYSSEY LONG TERM. Each row is one subject at one visit. The last four columns are the randomization strata, which the trial’s analysis plan adjusts for:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/edgararuiz/clinique" class="external-link">clinique</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">ldl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/simulate_ldl.html">simulate_ldl</a></span><span class="op">(</span><span class="fl">1561</span><span class="op">)</span></span>
+<span><span class="va">ldl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/simulate_ldl.html">simulate_ldl</a></span><span class="op">(</span><span class="fl">2341</span>, study <span class="op">=</span> <span class="st">"odyssey_lt"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ldl</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   subject_id  treatment age  sex  race   visit day ldl_baseline      ldl</span></span>
-<span><span class="co">#&gt; 1   001-0001 Inclisiran  78 Male White Day 150 150     84.68047 25.36234</span></span>
-<span><span class="co">#&gt; 2   001-0001 Inclisiran  78 Male White Day 270 270     84.68047 39.64797</span></span>
-<span><span class="co">#&gt; 3   001-0001 Inclisiran  78 Male White Day 330 330     84.68047 23.01864</span></span>
-<span><span class="co">#&gt; 4   001-0001 Inclisiran  78 Male White Day 450 450     84.68047 30.83611</span></span>
-<span><span class="co">#&gt; 5   001-0001 Inclisiran  78 Male White Day 510 510     84.68047 15.58256</span></span>
-<span><span class="co">#&gt; 6   001-0001 Inclisiran  78 Male White Day 540 540     84.68047 18.90423</span></span>
-<span><span class="co">#&gt;   ldl_pct_change</span></span>
-<span><span class="co">#&gt; 1      -70.04937</span></span>
-<span><span class="co">#&gt; 2      -53.17932</span></span>
-<span><span class="co">#&gt; 3      -72.81706</span></span>
-<span><span class="co">#&gt; 4      -63.58534</span></span>
-<span><span class="co">#&gt; 5      -81.59841</span></span>
-<span><span class="co">#&gt; 6      -77.67581</span></span></code></pre></div>
-<p>Fit the trial’s MMRM and compare the arms at each visit:</p>
+<span><span class="co">#&gt;   subject_id treatment age  sex  race   visit day ldl_baseline      ldl</span></span>
+<span><span class="co">#&gt; 1   001-0001   Placebo  62 Male White  Week 4  28     84.99889 81.75057</span></span>
+<span><span class="co">#&gt; 2   001-0001   Placebo  62 Male White  Week 8  56     84.99889 85.29617</span></span>
+<span><span class="co">#&gt; 3   001-0001   Placebo  62 Male White Week 12  84     84.99889 81.29028</span></span>
+<span><span class="co">#&gt; 4   001-0001   Placebo  62 Male White Week 16 112     84.99889 85.85899</span></span>
+<span><span class="co">#&gt; 5   001-0001   Placebo  62 Male White Week 24 168     84.99889 61.64344</span></span>
+<span><span class="co">#&gt; 6   001-0001   Placebo  62 Male White Week 36 252     84.99889 56.04520</span></span>
+<span><span class="co">#&gt;   ldl_pct_change hefh prior_mi_stroke statin_intensity         region</span></span>
+<span><span class="co">#&gt; 1     -3.8216028   No              No     Low/moderate Eastern Europe</span></span>
+<span><span class="co">#&gt; 2      0.3497427   No              No     Low/moderate Eastern Europe</span></span>
+<span><span class="co">#&gt; 3     -4.3631346   No              No     Low/moderate Eastern Europe</span></span>
+<span><span class="co">#&gt; 4      1.0118915   No              No     Low/moderate Eastern Europe</span></span>
+<span><span class="co">#&gt; 5    -27.4773677   No              No     Low/moderate Eastern Europe</span></span>
+<span><span class="co">#&gt; 6    -34.0636079   No              No     Low/moderate Eastern Europe</span></span></code></pre></div>
+<p>Fit the trial’s MMRM and compare the arms at Week 24, the primary endpoint:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ldl</span><span class="op">$</span><span class="va">subject_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">ldl</span><span class="op">$</span><span class="va">subject_id</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">mmrm</span><span class="fu">::</span><span class="fu"><a href="https://openpharma.github.io/mmrm/latest-tag/reference/mmrm.html" class="external-link">mmrm</a></span><span class="op">(</span></span>
-<span>  <span class="va">ldl_pct_change</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">*</span> <span class="va">visit</span> <span class="op">+</span> <span class="va">ldl_baseline</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">visit</span> <span class="op">|</span> <span class="va">subject_id</span><span class="op">)</span>,</span>
+<span>  <span class="va">ldl_pct_change</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">*</span> <span class="va">visit</span> <span class="op">+</span></span>
+<span>    <span class="va">hefh</span> <span class="op">*</span> <span class="va">visit</span> <span class="op">+</span></span>
+<span>    <span class="va">prior_mi_stroke</span> <span class="op">*</span> <span class="va">visit</span> <span class="op">+</span></span>
+<span>    <span class="va">statin_intensity</span> <span class="op">*</span> <span class="va">visit</span> <span class="op">+</span></span>
+<span>    <span class="va">region</span> <span class="op">*</span> <span class="va">visit</span> <span class="op">+</span></span>
+<span>    <span class="va">ldl_baseline</span> <span class="op">*</span> <span class="va">visit</span> <span class="op">+</span></span>
+<span>    <span class="fu">us</span><span class="op">(</span><span class="va">visit</span> <span class="op">|</span> <span class="va">subject_id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">ldl</span>,</span>
 <span>  reml <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  method <span class="op">=</span> <span class="st">"Kenward-Roger"</span></span>
+<span>  method <span class="op">=</span> <span class="st">"Satterthwaite"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">means</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html" class="external-link">emmeans</a></span><span class="op">(</span><span class="va">fit</span>, <span class="op">~</span> <span class="va">treatment</span> <span class="op">|</span> <span class="va">visit</span><span class="op">)</span></span>
+<span><span class="va">means</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html" class="external-link">emmeans</a></span><span class="op">(</span><span class="va">fit</span>, <span class="op">~</span> <span class="va">treatment</span> <span class="op">|</span> <span class="va">visit</span>, weights <span class="op">=</span> <span class="st">"proportional"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; mmrm() registered as emmeans extension</span></span>
-<span><span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/contrast.html" class="external-link">contrast</a></span><span class="op">(</span><span class="va">means</span>, <span class="st">"revpairwise"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; visit = Day 150:</span></span>
-<span><span class="co">#&gt;  contrast             estimate   SE   df t.ratio p.value</span></span>
-<span><span class="co">#&gt;  Inclisiran - Placebo    -59.8 1.16 1559 -51.635 &lt;0.0001</span></span>
+<span><span class="va">diffs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/contrast.html" class="external-link">contrast</a></span><span class="op">(</span><span class="va">means</span>, <span class="st">"revpairwise"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">diffs</span><span class="op">[</span><span class="va">diffs</span><span class="op">$</span><span class="va">visit</span> <span class="op">==</span> <span class="st">"Week 24"</span>, <span class="op">]</span></span>
+<span><span class="co">#&gt;  contrast             visit   estimate   SE   df t.ratio p.value</span></span>
+<span><span class="co">#&gt;  Alirocumab - Placebo Week 24    -64.2 1.19 2331 -53.949 &lt;0.0001</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; visit = Day 270:</span></span>
-<span><span class="co">#&gt;  contrast             estimate   SE   df t.ratio p.value</span></span>
-<span><span class="co">#&gt;  Inclisiran - Placebo    -51.9 1.36 1560 -38.165 &lt;0.0001</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; visit = Day 330:</span></span>
-<span><span class="co">#&gt;  contrast             estimate   SE   df t.ratio p.value</span></span>
-<span><span class="co">#&gt;  Inclisiran - Placebo    -61.8 1.22 1559 -50.824 &lt;0.0001</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; visit = Day 450:</span></span>
-<span><span class="co">#&gt;  contrast             estimate   SE   df t.ratio p.value</span></span>
-<span><span class="co">#&gt;  Inclisiran - Placebo    -48.6 1.34 1560 -36.176 &lt;0.0001</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; visit = Day 510:</span></span>
-<span><span class="co">#&gt;  contrast             estimate   SE   df t.ratio p.value</span></span>
-<span><span class="co">#&gt;  Inclisiran - Placebo    -57.3 1.20 1560 -47.578 &lt;0.0001</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; visit = Day 540:</span></span>
-<span><span class="co">#&gt;  contrast             estimate   SE   df t.ratio p.value</span></span>
-<span><span class="co">#&gt;  Inclisiran - Placebo    -54.8 1.25 1560 -43.733 &lt;0.0001</span></span></code></pre></div>
-<p><code><a href="articles/orion10.html">vignette("orion10", package = "clinique")</a></code> explains where each number in the simulation comes from.</p>
+<span><span class="co">#&gt; Results are averaged over the levels of: hefh, prior_mi_stroke, statin_intensity, region</span></span></code></pre></div>
+<p>The trial reported a difference of -62% (95% CI -64 to -59).</p>
+</div>
+<div class="section level2">
+<h2 id="learn-more">Learn more<a class="anchor" aria-label="anchor" href="#learn-more"></a>
+</h2>
+<p>Each study has an article that explains every number in the simulation, where it came from, and what was assumed:</p>
+<ol style="list-style-type: decimal">
+<li>ORION-10: <code><a href="articles/orion10.html">vignette("orion10", package = "clinique")</a></code>.</li>
+<li>ODYSSEY LONG TERM: <code><a href="articles/odyssey-lt.html">vignette("odyssey-lt", package = "clinique")</a></code>.</li>
+</ol>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

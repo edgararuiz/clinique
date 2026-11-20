@@ -24,7 +24,8 @@ trial's mixed model for repeated measures (MMRM)."></head><body>
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/orion10.html">Simulating ORION-10</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/odyssey-lt.html">Simulating ODYSSEY LONG TERM</a></li>
+    <li><a class="dropdown-item" href="../articles/orion10.html">Simulating ORION-10</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -51,7 +52,7 @@ trial's mixed model for repeated measures (MMRM).</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">simulate_ldl</span><span class="op">(</span><span class="va">n</span>, study <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"orion10"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">simulate_ldl</span><span class="op">(</span><span class="va">n</span>, study <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"orion10"</span>, <span class="st">"odyssey_lt"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -59,50 +60,70 @@ trial's mixed model for repeated measures (MMRM).</p>
 
 
 <dl><dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
-<dd><p>Number of subjects, randomized 1:1. When <code>n</code> is odd, the extra
-subject gets the active treatment. ORION-10 randomized 1,561.</p></dd>
+<dd><p>Number of subjects. The randomization ratio depends on the
+study. Subjects left over after the last full ratio block go to the
+active treatment.</p></dd>
 
 
 <dt id="arg-study">study<a class="anchor" aria-label="anchor" href="#arg-study"></a></dt>
-<dd><p>The trial to model. Only <code>"orion10"</code> for now.</p></dd>
+<dd><p>The trial to model:</p><ul><li><p><code>"orion10"</code>: ORION-10, inclisiran vs placebo (NCT03399370),
+randomized 1:1. The trial randomized 1,561. See
+<code><a href="../articles/orion10.html">vignette("orion10", package = "clinique")</a></code>.</p></li>
+<li><p><code>"odyssey_lt"</code>: ODYSSEY LONG TERM, alirocumab vs placebo
+(NCT01507831), randomized 2:1. The trial randomized 2,341. See
+<code><a href="../articles/odyssey-lt.html">vignette("odyssey-lt", package = "clinique")</a></code>.</p></li>
+</ul></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A data frame with one row per subject per visit, sorted by
-subject and then visit, and these columns:</p><ul><li><p><code>subject_id</code>: Subject identifier, such as <code>"001-0001"</code>.</p></li>
-<li><p><code>treatment</code>: Factor, <code>"Placebo"</code> or <code>"Inclisiran"</code>, with placebo as
-the reference level.</p></li>
+subject and then visit. Every study has these columns:</p><ul><li><p><code>subject_id</code>: Subject identifier, such as <code>"001-0001"</code>.</p></li>
+<li><p><code>treatment</code>: Factor with placebo as the reference level: <code>"Placebo"</code>
+and <code>"Inclisiran"</code> or <code>"Alirocumab"</code>.</p></li>
 <li><p><code>age</code>: Age in years.</p></li>
 <li><p><code>sex</code>: <code>"Male"</code> or <code>"Female"</code>.</p></li>
 <li><p><code>race</code>: <code>"White"</code>, <code>"Black"</code> or <code>"Other"</code>.</p></li>
-<li><p><code>visit</code>: Ordered factor, <code>"Day 150"</code> to <code>"Day 540"</code>.</p></li>
+<li><p><code>visit</code>: Ordered factor: <code>"Day 150"</code> to <code>"Day 540"</code> for ORION-10,
+<code>"Week 4"</code> to <code>"Week 52"</code> for ODYSSEY LONG TERM.</p></li>
 <li><p><code>day</code>: Study day of the visit.</p></li>
 <li><p><code>ldl_baseline</code>: LDL at baseline, in mg/dL.</p></li>
 <li><p><code>ldl</code>: LDL at the visit, in mg/dL.</p></li>
 <li><p><code>ldl_pct_change</code>: Percent change in LDL from baseline.</p></li>
+</ul><p>ODYSSEY LONG TERM adds its randomization strata, which its analysis
+plan adjusts for:</p><ul><li><p><code>hefh</code>: Heterozygous familial hypercholesterolemia, <code>"Yes"</code> or
+<code>"No"</code>.</p></li>
+<li><p><code>prior_mi_stroke</code>: Prior heart attack or ischemic stroke, <code>"Yes"</code> or
+<code>"No"</code>.</p></li>
+<li><p><code>statin_intensity</code>: <code>"High"</code> or <code>"Low/moderate"</code>.</p></li>
+<li><p><code>region</code>: <code>"North America"</code>, <code>"Western Europe"</code>, <code>"Eastern Europe"</code>
+or <code>"Rest of World"</code>.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The only study available is ORION-10 (inclisiran vs placebo,
-NCT03399370). The baseline LDL, the mean percent change at each visit and
-the demographics follow the trial's published results. The mean percent
+    <p>The baseline LDL, the mean percent change at each visit and the
+demographics follow the trial's published results. The mean percent
 changes follow the observed means, not the published estimates that
-fill in missing values, so the treatment effect is a few points larger
-than the published one. <code><a href="../articles/orion10.html">vignette("orion10", package = "clinique")</a></code>
-explains each number, its source and the assumptions.</p>
-<p>The data is simulated. It is not affiliated with or endorsed by the
+account for missing values. Each study's vignette explains every number,
+its source and the assumptions.</p>
+<p>The data is simulated. It is not affiliated with or endorsed by either
 trial's sponsor.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>Statistical analysis plan:
+    <p>ORION-10 statistical analysis plan:
 <a href="https://cdn.clinicaltrials.gov/large-docs/70/NCT03399370/SAP_001.pdf" class="external-link">https://cdn.clinicaltrials.gov/large-docs/70/NCT03399370/SAP_001.pdf</a></p>
-<p>FDA statistical review:
+<p>ORION-10 FDA statistical review:
 <a href="https://www.accessdata.fda.gov/drugsatfda_docs/nda/2022/214012Orig1s000StatR.pdf" class="external-link">https://www.accessdata.fda.gov/drugsatfda_docs/nda/2022/214012Orig1s000StatR.pdf</a></p>
 <p>Ray KK, et al. Two Phase 3 Trials of Inclisiran in Patients with Elevated
 LDL Cholesterol. N Engl J Med 2020;382:1507-1519.
 <a href="https://doi.org/10.1056/NEJMoa1912387" class="external-link">doi:10.1056/NEJMoa1912387</a></p>
+<p>ODYSSEY LONG TERM FDA statistical review:
+<a href="https://www.accessdata.fda.gov/drugsatfda_docs/nda/2015/125559Orig1s000StatR.pdf" class="external-link">https://www.accessdata.fda.gov/drugsatfda_docs/nda/2015/125559Orig1s000StatR.pdf</a></p>
+<p>Robinson JG, et al. Efficacy and Safety of Alirocumab in Reducing Lipids
+and Cardiovascular Events. N Engl J Med 2015;372:1489-1499. Its
+statistical analysis plan is in the protocol supplement.
+<a href="https://doi.org/10.1056/NEJMoa1501031" class="external-link">doi:10.1056/NEJMoa1501031</a></p>
     </div>
 
     <div class="section level2">
@@ -124,6 +145,23 @@ LDL Cholesterol. N Engl J Med 2020;382:1507-1519.
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4      33.296914</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5      24.935342</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6      28.766009</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">odyssey</span> <span class="op">&lt;-</span> <span class="fu">simulate_ldl</span><span class="op">(</span><span class="fl">90</span>, study <span class="op">=</span> <span class="st">"odyssey_lt"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">odyssey</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   subject_id  treatment age  sex  race   visit day ldl_baseline      ldl</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   001-0001 Alirocumab  62 Male White  Week 4  28     100.9234 30.09524</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   001-0001 Alirocumab  62 Male White  Week 8  56     100.9234 27.99392</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   001-0001 Alirocumab  62 Male White Week 12  84     100.9234 16.72129</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   001-0001 Alirocumab  62 Male White Week 16 112     100.9234 16.59908</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   001-0001 Alirocumab  62 Male White Week 24 168     100.9234 17.06002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   001-0001 Alirocumab  62 Male White Week 36 252     100.9234 12.75462</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ldl_pct_change hefh prior_mi_stroke statin_intensity        region</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      -70.18011   No             Yes     Low/moderate North America</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      -72.26221   No             Yes     Low/moderate North America</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3      -83.43169   No             Yes     Low/moderate North America</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4      -83.55279   No             Yes     Low/moderate North America</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5      -83.09607   No             Yes     Low/moderate North America</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6      -87.36207   No             Yes     Low/moderate North America</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
