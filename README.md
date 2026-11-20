@@ -7,8 +7,8 @@
 
 <!-- badges: end -->
 
-clinique gives you data shaped like a real clinical trial, so you can
-fit that trial’s own analysis to it. Each dataset is modelled on a
+This package gives you data shaped like a real clinical trial, so you
+can fit that trial’s own analysis to it. Each dataset is modeled on a
 published trial and its statistical analysis plan: the same visits, the
 same covariates, and effects that match the published results.
 

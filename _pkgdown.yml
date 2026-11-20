@@ -1,4 +1,7 @@
 url: https://edgararuiz.github.io/clinique/
-template:
-  bootstrap: 5
 
+template:
+  package: tidytemplate
+  bootstrap: 5
+  bslib:
+    primary: "#CA225E"
