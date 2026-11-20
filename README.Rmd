@@ -18,14 +18,13 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-clinique simulates realistic clinical trial data. Each dataset is modelled
-on a published trial and its statistical analysis plan, so the trial's own
-analysis gives results close to the published ones. Every subject is made
-up.
+clinique gives you data shaped like a real clinical trial, so you can fit
+that trial's own analysis to it. Each dataset is modelled on a published
+trial and its statistical analysis plan: the same visits, the same
+covariates, and effects that match the published results.
 
-The first dataset is modelled on ORION-10, a trial of inclisiran, a drug
-that lowers LDL cholesterol, against placebo. The data is simulated and is
-not affiliated with or endorsed by the trial's sponsor.
+Every subject is made up. The data is not affiliated with or endorsed by
+any trial's sponsor.
 
 ## Installation
 
@@ -37,34 +36,98 @@ You can install the development version of clinique from
 pak::pak("edgararuiz/clinique")
 ```
 
+## Available studies
+
+`simulate_ldl()` covers two trials of drugs that lower LDL cholesterol.
+Both are analyzed with a mixed model for repeated measures (MMRM), but
+each one teaches something different:
+
+| `study` | Trial | Drug | Subjects | Design | What it teaches |
+|---|---|---|---|---|---|
+| `"orion10"` | ORION-10 | Inclisiran, twice a year | 1,561 | 1:1, 6 visits over 18 months | An effect that rises and falls with each dose |
+| `"odyssey_lt"` | ODYSSEY LONG TERM | Alirocumab, every two weeks | 2,341 | 2:1, 7 visits over 1 year | Adjusting for randomization strata, and weighting means by them |
+
+The difference in dosing shows in the data. Inclisiran's effect is
+strongest a few months after each dose and weaker just before the next.
+Alirocumab's stays flat:
+
+```{r profiles, echo = FALSE, fig.height = 3.5, fig.alt = "Mean percent change in LDL by study day for each arm. ORION-10's inclisiran arm rises and falls between doses; ODYSSEY LONG TERM's alirocumab arm stays flat near -63%. Both placebo arms stay near zero."}
+library(clinique)
+
+set.seed(1)
+studies <- list(
+  "ORION-10" = simulate_ldl(1561, "orion10"),
+  "ODYSSEY LONG TERM" = simulate_ldl(2341, "odyssey_lt")
+)
+
+old <- par(mfrow = c(1, 2), mar = c(4, 4, 2, 1))
+for (name in names(studies)) {
+  d <- studies[[name]]
+  means <- aggregate(ldl_pct_change ~ day + treatment, data = d, FUN = mean)
+  plot(
+    NULL,
+    xlim = c(0, max(d$day)),
+    ylim = c(-75, 10),
+    xlab = "Study day",
+    ylab = "Mean % change in LDL",
+    main = name
+  )
+  abline(h = 0, col = "grey80")
+  for (arm in levels(d$treatment)) {
+    m <- means[means$treatment == arm, ]
+    lines(c(0, m$day), c(0, m$ldl_pct_change), type = "b", pch = 19,
+      col = if (arm == "Placebo") "grey50" else "steelblue")
+  }
+  legend("right", legend = rev(levels(d$treatment)), bty = "n",
+    col = c("steelblue", "grey50"), lty = 1, pch = 19)
+}
+par(old)
+```
+
 ## Example
 
-`simulate_ldl()` returns one row per subject per visit, ready for the
-trial's mixed model for repeated measures (MMRM):
+Simulate ODYSSEY LONG TERM. Each row is one subject at one visit. The last
+four columns are the randomization strata, which the trial's analysis
+plan adjusts for:
 
 ```{r}
 library(clinique)
 
 set.seed(1)
-ldl <- simulate_ldl(1561)
+ldl <- simulate_ldl(2341, study = "odyssey_lt")
 head(ldl)
 ```
 
-Fit the trial's MMRM and compare the arms at each visit:
+Fit the trial's MMRM and compare the arms at Week 24, the primary
+endpoint:
 
 ```{r}
 ldl$subject_id <- factor(ldl$subject_id)
 
 fit <- mmrm::mmrm(
-  ldl_pct_change ~ treatment * visit + ldl_baseline + us(visit | subject_id),
+  ldl_pct_change ~ treatment * visit +
+    hefh * visit +
+    prior_mi_stroke * visit +
+    statin_intensity * visit +
+    region * visit +
+    ldl_baseline * visit +
+    us(visit | subject_id),
   data = ldl,
   reml = TRUE,
-  method = "Kenward-Roger"
+  method = "Satterthwaite"
 )
 
-means <- emmeans::emmeans(fit, ~ treatment | visit)
-emmeans::contrast(means, "revpairwise")
+means <- emmeans::emmeans(fit, ~ treatment | visit, weights = "proportional")
+diffs <- summary(emmeans::contrast(means, "revpairwise"))
+diffs[diffs$visit == "Week 24", ]
 ```
 
-`vignette("orion10", package = "clinique")` explains where each number in
-the simulation comes from.
+The trial reported a difference of -62% (95% CI -64 to -59).
+
+## Learn more
+
+Each study has an article that explains every number in the simulation,
+where it came from, and what was assumed:
+
+1. ORION-10: `vignette("orion10", package = "clinique")`.
+2. ODYSSEY LONG TERM: `vignette("odyssey-lt", package = "clinique")`.

@@ -4,29 +4,51 @@
 \alias{simulate_ldl}
 \title{Simulate an LDL cholesterol trial dataset}
 \usage{
-simulate_ldl(n, study = c("orion10"))
+simulate_ldl(n, study = c("orion10", "odyssey_lt"))
 }
 \arguments{
-\item{n}{Number of subjects, randomized 1:1. When \code{n} is odd, the extra
-subject gets the active treatment. ORION-10 randomized 1,561.}
+\item{n}{Number of subjects. The randomization ratio depends on the
+study. Subjects left over after the last full ratio block go to the
+active treatment.}
 
-\item{study}{The trial to model. Only \code{"orion10"} for now.}
+\item{study}{The trial to model:
+\itemize{
+\item \code{"orion10"}: ORION-10, inclisiran vs placebo (NCT03399370),
+randomized 1:1. The trial randomized 1,561. See
+\code{vignette("orion10", package = "clinique")}.
+\item \code{"odyssey_lt"}: ODYSSEY LONG TERM, alirocumab vs placebo
+(NCT01507831), randomized 2:1. The trial randomized 2,341. See
+\code{vignette("odyssey-lt", package = "clinique")}.
+}}
 }
 \value{
 A data frame with one row per subject per visit, sorted by
-subject and then visit, and these columns:
+subject and then visit. Every study has these columns:
 \itemize{
 \item \code{subject_id}: Subject identifier, such as \code{"001-0001"}.
-\item \code{treatment}: Factor, \code{"Placebo"} or \code{"Inclisiran"}, with placebo as
-the reference level.
+\item \code{treatment}: Factor with placebo as the reference level: \code{"Placebo"}
+and \code{"Inclisiran"} or \code{"Alirocumab"}.
 \item \code{age}: Age in years.
 \item \code{sex}: \code{"Male"} or \code{"Female"}.
 \item \code{race}: \code{"White"}, \code{"Black"} or \code{"Other"}.
-\item \code{visit}: Ordered factor, \code{"Day 150"} to \code{"Day 540"}.
+\item \code{visit}: Ordered factor: \code{"Day 150"} to \code{"Day 540"} for ORION-10,
+\code{"Week 4"} to \code{"Week 52"} for ODYSSEY LONG TERM.
 \item \code{day}: Study day of the visit.
 \item \code{ldl_baseline}: LDL at baseline, in mg/dL.
 \item \code{ldl}: LDL at the visit, in mg/dL.
 \item \code{ldl_pct_change}: Percent change in LDL from baseline.
+}
+
+ODYSSEY LONG TERM adds its randomization strata, which its analysis
+plan adjusts for:
+\itemize{
+\item \code{hefh}: Heterozygous familial hypercholesterolemia, \code{"Yes"} or
+\code{"No"}.
+\item \code{prior_mi_stroke}: Prior heart attack or ischemic stroke, \code{"Yes"} or
+\code{"No"}.
+\item \code{statin_intensity}: \code{"High"} or \code{"Low/moderate"}.
+\item \code{region}: \code{"North America"}, \code{"Western Europe"}, \code{"Eastern Europe"}
+or \code{"Rest of World"}.
 }
 }
 \description{
@@ -36,30 +58,39 @@ per subject per scheduled visit, with no missing values, ready for the
 trial's mixed model for repeated measures (MMRM).
 }
 \details{
-The only study available is ORION-10 (inclisiran vs placebo,
-NCT03399370). The baseline LDL, the mean percent change at each visit and
-the demographics follow the trial's published results. The mean percent
+The baseline LDL, the mean percent change at each visit and the
+demographics follow the trial's published results. The mean percent
 changes follow the observed means, not the published estimates that
-fill in missing values, so the treatment effect is a few points larger
-than the published one. \code{vignette("orion10", package = "clinique")}
-explains each number, its source and the assumptions.
+account for missing values. Each study's vignette explains every number,
+its source and the assumptions.
 
-The data is simulated. It is not affiliated with or endorsed by the
+The data is simulated. It is not affiliated with or endorsed by either
 trial's sponsor.
 }
 \examples{
 set.seed(1)
 ldl <- simulate_ldl(100)
 head(ldl)
+
+odyssey <- simulate_ldl(90, study = "odyssey_lt")
+head(odyssey)
 }
 \references{
-Statistical analysis plan:
+ORION-10 statistical analysis plan:
 \url{https://cdn.clinicaltrials.gov/large-docs/70/NCT03399370/SAP_001.pdf}
 
-FDA statistical review:
+ORION-10 FDA statistical review:
 \url{https://www.accessdata.fda.gov/drugsatfda_docs/nda/2022/214012Orig1s000StatR.pdf}
 
 Ray KK, et al. Two Phase 3 Trials of Inclisiran in Patients with Elevated
 LDL Cholesterol. N Engl J Med 2020;382:1507-1519.
 \doi{10.1056/NEJMoa1912387}
+
+ODYSSEY LONG TERM FDA statistical review:
+\url{https://www.accessdata.fda.gov/drugsatfda_docs/nda/2015/125559Orig1s000StatR.pdf}
+
+Robinson JG, et al. Efficacy and Safety of Alirocumab in Reducing Lipids
+and Cardiovascular Events. N Engl J Med 2015;372:1489-1499. Its
+statistical analysis plan is in the protocol supplement.
+\doi{10.1056/NEJMoa1501031}
 }
