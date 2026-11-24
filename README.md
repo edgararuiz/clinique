@@ -54,28 +54,23 @@ library(clinique)
 set.seed(1)
 ldl <- simulate_ldl(2341, study = "odyssey_lt")
 head(ldl)
-#>   subject_id treatment age  sex  race   visit day ldl_baseline      ldl
-#> 1   001-0001   Placebo  62 Male White  Week 4  28     84.99889 81.75057
-#> 2   001-0001   Placebo  62 Male White  Week 8  56     84.99889 85.29617
-#> 3   001-0001   Placebo  62 Male White Week 12  84     84.99889 81.29028
-#> 4   001-0001   Placebo  62 Male White Week 16 112     84.99889 85.85899
-#> 5   001-0001   Placebo  62 Male White Week 24 168     84.99889 61.64344
-#> 6   001-0001   Placebo  62 Male White Week 36 252     84.99889 56.04520
-#>   ldl_pct_change hefh prior_mi_stroke statin_intensity         region
-#> 1     -3.8216028   No              No     Low/moderate Eastern Europe
-#> 2      0.3497427   No              No     Low/moderate Eastern Europe
-#> 3     -4.3631346   No              No     Low/moderate Eastern Europe
-#> 4      1.0118915   No              No     Low/moderate Eastern Europe
-#> 5    -27.4773677   No              No     Low/moderate Eastern Europe
-#> 6    -34.0636079   No              No     Low/moderate Eastern Europe
+#> # A tibble: 6 × 14
+#>   subject_id treatment   age sex   race  visit     day ldl_baseline   ldl
+#>   <fct>      <fct>     <dbl> <fct> <fct> <ord>   <dbl>        <dbl> <dbl>
+#> 1 001-0001   Placebo      62 Male  White Week 4     28         85.0  81.8
+#> 2 001-0001   Placebo      62 Male  White Week 8     56         85.0  85.3
+#> 3 001-0001   Placebo      62 Male  White Week 12    84         85.0  81.3
+#> 4 001-0001   Placebo      62 Male  White Week 16   112         85.0  85.9
+#> 5 001-0001   Placebo      62 Male  White Week 24   168         85.0  61.6
+#> 6 001-0001   Placebo      62 Male  White Week 36   252         85.0  56.0
+#> # ℹ 5 more variables: ldl_pct_change <dbl>, hefh <fct>, prior_mi_stroke <fct>,
+#> #   statin_intensity <fct>, region <fct>
 ```
 
 Fit the trial’s MMRM and compare the arms at Week 24, the primary
 endpoint:
 
 ``` r
-ldl$subject_id <- factor(ldl$subject_id)
-
 fit <- mmrm::mmrm(
   ldl_pct_change ~ treatment * visit +
     hefh * visit +

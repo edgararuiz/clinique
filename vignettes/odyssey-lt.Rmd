@@ -222,8 +222,6 @@ It uses an unstructured covariance, REML, and Satterthwaite degrees of
 freedom. ORION-10 used Kenward-Roger instead.
 
 ```{r, eval = has_models}
-ldl$subject_id <- factor(ldl$subject_id)
-
 fit <- mmrm::mmrm(
   ldl_pct_change ~ treatment * visit +
     hefh * visit +

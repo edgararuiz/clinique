@@ -20,10 +20,10 @@ test_that("draw_subjects() draws demographics and strata from their levels", {
   )
   expect_true(all(subjects$age >= p$age_min & subjects$age <= p$age_max))
   expect_true(all(subjects$age == round(subjects$age)))
-  expect_true(all(subjects$sex %in% names(p$sex_prob)))
-  expect_true(all(subjects$race %in% names(p$race_prob)))
+  expect_equal(levels(subjects$sex), sort(names(p$sex_prob)))
+  expect_equal(levels(subjects$race), sort(names(p$race_prob)))
   for (s in names(p$strata)) {
-    expect_true(all(subjects[[s]] %in% names(p$strata[[s]])))
+    expect_equal(levels(subjects[[s]]), sort(names(p$strata[[s]])))
   }
 })
 

@@ -102,8 +102,6 @@ Fit the trial's MMRM and compare the arms at Week 24, the primary
 endpoint:
 
 ```{r}
-ldl$subject_id <- factor(ldl$subject_id)
-
 fit <- mmrm::mmrm(
   ldl_pct_change ~ treatment * visit +
     hefh * visit +

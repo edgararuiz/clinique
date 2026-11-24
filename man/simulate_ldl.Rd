@@ -22,15 +22,16 @@ randomized 1:1. The trial randomized 1,561. See
 }}
 }
 \value{
-A data frame with one row per subject per visit, sorted by
-subject and then visit. Every study has these columns:
+A tibble with one row per subject per visit, sorted by subject
+and then visit. Columns that aren't numeric are factors. Every study
+has these columns:
 \itemize{
-\item \code{subject_id}: Subject identifier, such as \code{"001-0001"}.
+\item \code{subject_id}: Factor, the subject identifier, such as \code{"001-0001"}.
 \item \code{treatment}: Factor with placebo as the reference level: \code{"Placebo"}
 and \code{"Inclisiran"} or \code{"Alirocumab"}.
 \item \code{age}: Age in years.
-\item \code{sex}: \code{"Male"} or \code{"Female"}.
-\item \code{race}: \code{"White"}, \code{"Black"} or \code{"Other"}.
+\item \code{sex}: Factor, \code{"Male"} or \code{"Female"}.
+\item \code{race}: Factor, \code{"White"}, \code{"Black"} or \code{"Other"}.
 \item \code{visit}: Ordered factor: \code{"Day 150"} to \code{"Day 540"} for ORION-10,
 \code{"Week 4"} to \code{"Week 52"} for ODYSSEY LONG TERM.
 \item \code{day}: Study day of the visit.
@@ -39,8 +40,8 @@ and \code{"Inclisiran"} or \code{"Alirocumab"}.
 \item \code{ldl_pct_change}: Percent change in LDL from baseline.
 }
 
-ODYSSEY LONG TERM adds its randomization strata, which its analysis
-plan adjusts for:
+ODYSSEY LONG TERM adds its randomization strata as factors, which its
+analysis plan adjusts for:
 \itemize{
 \item \code{hefh}: Heterozygous familial hypercholesterolemia, \code{"Yes"} or
 \code{"No"}.

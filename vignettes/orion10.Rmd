@@ -177,8 +177,6 @@ reshape(observed, idvar = "visit", timevar = "treatment", direction = "wide")
 The SAP's MMRM, fitted with the `mmrm` package:
 
 ```{r, eval = has_models}
-ldl$subject_id <- factor(ldl$subject_id)
-
 fit <- mmrm::mmrm(
   ldl_pct_change ~ treatment * visit + ldl_baseline + us(visit | subject_id),
   data = ldl,

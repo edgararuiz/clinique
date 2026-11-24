@@ -26,15 +26,16 @@
 #'     (NCT01507831), randomized 2:1. The trial randomized 2,341. See
 #'     `vignette("odyssey-lt", package = "clinique")`.
 #'
-#' @returns A data frame with one row per subject per visit, sorted by
-#'   subject and then visit. Every study has these columns:
+#' @returns A tibble with one row per subject per visit, sorted by subject
+#'   and then visit. Columns that aren't numeric are factors. Every study
+#'   has these columns:
 #'
-#'   * `subject_id`: Subject identifier, such as `"001-0001"`.
+#'   * `subject_id`: Factor, the subject identifier, such as `"001-0001"`.
 #'   * `treatment`: Factor with placebo as the reference level: `"Placebo"`
 #'     and `"Inclisiran"` or `"Alirocumab"`.
 #'   * `age`: Age in years.
-#'   * `sex`: `"Male"` or `"Female"`.
-#'   * `race`: `"White"`, `"Black"` or `"Other"`.
+#'   * `sex`: Factor, `"Male"` or `"Female"`.
+#'   * `race`: Factor, `"White"`, `"Black"` or `"Other"`.
 #'   * `visit`: Ordered factor: `"Day 150"` to `"Day 540"` for ORION-10,
 #'     `"Week 4"` to `"Week 52"` for ODYSSEY LONG TERM.
 #'   * `day`: Study day of the visit.
@@ -42,8 +43,8 @@
 #'   * `ldl`: LDL at the visit, in mg/dL.
 #'   * `ldl_pct_change`: Percent change in LDL from baseline.
 #'
-#'   ODYSSEY LONG TERM adds its randomization strata, which its analysis
-#'   plan adjusts for:
+#'   ODYSSEY LONG TERM adds its randomization strata as factors, which its
+#'   analysis plan adjusts for:
 #'
 #'   * `hefh`: Heterozygous familial hypercholesterolemia, `"Yes"` or
 #'     `"No"`.
@@ -95,8 +96,13 @@ simulate_ldl <- function(n, study = c("orion10", "odyssey_lt")) {
   # One row per subject per visit
   n_visits <- length(p$day)
   each <- rep(seq_len(n), each = n_visits)
-  out <- data.frame(
-    subject_id = sprintf("001-%04d", each),
+  subject_id <- sprintf("001-%04d", seq_len(n))
+  # Computed before tibble(), which would read `ldl_baseline` as the
+  # repeated column instead of one value per subject
+  ldl <- as.vector(t(ldl_baseline * ratio))
+  ldl_pct_change <- as.vector(t(100 * (ratio - 1)))
+  out <- tibble::tibble(
+    subject_id = factor(subject_id[each], levels = subject_id),
     treatment = factor(subjects$arm[each], levels = rev(names(p$ratio))),
     age = subjects$age[each],
     sex = subjects$sex[each],
@@ -104,8 +110,8 @@ simulate_ldl <- function(n, study = c("orion10", "odyssey_lt")) {
     visit = factor(rep(p$visit, n), levels = p$visit, ordered = TRUE),
     day = rep(p$day, n),
     ldl_baseline = ldl_baseline[each],
-    ldl = as.vector(t(ldl_baseline * ratio)),
-    ldl_pct_change = as.vector(t(100 * (ratio - 1)))
+    ldl = ldl,
+    ldl_pct_change = ldl_pct_change
   )
 
   # Study-specific columns go last

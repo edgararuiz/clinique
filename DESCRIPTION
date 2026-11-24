@@ -14,7 +14,8 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Imports:
     MASS,
-    stats
+    stats,
+    tibble
 Suggests:
     emmeans,
     knitr,

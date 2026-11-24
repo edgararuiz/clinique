@@ -17,8 +17,11 @@ test_that("simulate_ldl() returns one row per subject per visit", {
     p <- ldl_studies[[study]]
     ldl <- simulate_ldl(11, study)
 
-    expect_s3_class(ldl, "data.frame")
+    expect_s3_class(ldl, "tbl_df")
     expect_named(ldl, c(core_columns, names(p$strata)))
+    # Every column that isn't numeric is a factor
+    other <- Filter(function(x) !is.numeric(x) && !is.factor(x), ldl)
+    expect_length(other, 0)
     expect_equal(nrow(ldl), 11 * length(p$visit))
     expect_false(anyNA(ldl))
     expect_equal(levels(ldl$treatment), rev(names(p$ratio)))
@@ -37,6 +40,7 @@ test_that("simulate_ldl() keeps each subject's values fixed across visits", {
   fixed <- c("treatment", "age", "sex", "race", "ldl_baseline", "hefh")
   per_subject <- unique(ldl[c("subject_id", fixed)])
   expect_equal(nrow(per_subject), 11)
+  expect_equal(levels(ldl$subject_id), sprintf("001-%04d", 1:11))
 })
 
 test_that("simulate_ldl() defaults to ORION-10", {
@@ -57,7 +61,6 @@ test_that("the SAP's MMRM recovers the ORION-10 treatment differences", {
   skip_if_not_installed("emmeans")
   withr::local_seed(1)
   ldl <- simulate_ldl(1561, "orion10")
-  ldl$subject_id <- factor(ldl$subject_id)
 
   fit <- mmrm::mmrm(
     ldl_pct_change ~ treatment * visit + ldl_baseline + us(visit | subject_id),
@@ -78,7 +81,6 @@ test_that("the SAP's MMRM recovers the ODYSSEY LONG TERM Week 24 difference", {
   skip_if_not_installed("emmeans")
   withr::local_seed(1)
   ldl <- simulate_ldl(2341, "odyssey_lt")
-  ldl$subject_id <- factor(ldl$subject_id)
 
   fit <- mmrm::mmrm(
     ldl_pct_change ~ treatment *
