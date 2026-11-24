@@ -13,7 +13,7 @@ has_models <- requireNamespace("mmrm", quietly = TRUE) &&
   requireNamespace("emmeans", quietly = TRUE)
 ```
 
-`simulate_ldl(n, study = "odyssey_lt")` makes up LDL cholesterol data that
+`simulate_odyssey_lt(n)` makes up LDL cholesterol data that
 looks like the ODYSSEY LONG TERM trial. This article explains how. It lists
 each number the simulation uses, where the number came from, and what was
 assumed. It follows the same structure as `vignette("orion10")`, so you
@@ -61,7 +61,7 @@ it.
 library(clinique)
 
 set.seed(1)
-ldl <- simulate_ldl(2341, study = "odyssey_lt")
+ldl <- simulate_odyssey_lt(2341)
 head(ldl)
 ```
 

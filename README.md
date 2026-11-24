@@ -27,14 +27,14 @@ pak::pak("edgararuiz/clinique")
 
 ## Available studies
 
-`simulate_ldl()` covers two trials of drugs that lower LDL cholesterol.
-Both are analyzed with a mixed model for repeated measures (MMRM), but
-each one teaches something different:
+Each study has its own function. There are two so far, both trials of
+drugs that lower LDL cholesterol. Both are analyzed with a mixed model
+for repeated measures (MMRM), but each one teaches something different:
 
-| `study` | Trial | Drug | Subjects | Design | What it teaches |
+| Function | Trial | Drug | Subjects | Design | What it teaches |
 |----|----|----|----|----|----|
-| `"orion10"` | ORION-10 | Inclisiran, twice a year | 1,561 | 1:1, 6 visits over 18 months | An effect that rises and falls with each dose |
-| `"odyssey_lt"` | ODYSSEY LONG TERM | Alirocumab, every two weeks | 2,341 | 2:1, 7 visits over 1 year | Adjusting for randomization strata, and weighting means by them |
+| `simulate_orion10()` | ORION-10 | Inclisiran, twice a year | 1,561 | 1:1, 6 visits over 18 months | An effect that rises and falls with each dose |
+| `simulate_odyssey_lt()` | ODYSSEY LONG TERM | Alirocumab, every two weeks | 2,341 | 2:1, 7 visits over 1 year | Adjusting for randomization strata, and weighting means by them |
 
 The difference in dosing shows in the data. Inclisiran’s effect is
 strongest a few months after each dose and weaker just before the next.
@@ -52,7 +52,7 @@ analysis plan adjusts for:
 library(clinique)
 
 set.seed(1)
-ldl <- simulate_ldl(2341, study = "odyssey_lt")
+ldl <- simulate_odyssey_lt(2341)
 head(ldl)
 #> # A tibble: 6 × 14
 #>   subject_id treatment   age sex   race  visit     day ldl_baseline   ldl

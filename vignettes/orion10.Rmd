@@ -13,7 +13,7 @@ has_models <- requireNamespace("mmrm", quietly = TRUE) &&
   requireNamespace("emmeans", quietly = TRUE)
 ```
 
-`simulate_ldl(n, study = "orion10")` makes up LDL cholesterol data that
+`simulate_orion10(n)` makes up LDL cholesterol data that
 looks like the ORION-10 trial. This article explains how. It lists each
 number the simulation uses, where the number came from, and what was
 assumed.
@@ -53,7 +53,7 @@ standard deviations (SDs). "Assumed" means no public source gives it.
 library(clinique)
 
 set.seed(1)
-ldl <- simulate_ldl(1561)
+ldl <- simulate_orion10(1561)
 head(ldl)
 ```
 

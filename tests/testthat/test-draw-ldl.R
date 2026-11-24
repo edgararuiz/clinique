@@ -1,7 +1,6 @@
 test_that("draw_baseline() matches the study's mean and SD", {
   withr::local_seed(1)
-  for (study in names(ldl_studies)) {
-    p <- ldl_studies[[study]]
+  for (p in ldl_settings) {
     baseline <- draw_baseline(50000, p)
 
     expect_true(all(baseline > 0))
@@ -12,8 +11,7 @@ test_that("draw_baseline() matches the study's mean and SD", {
 
 test_that("draw_log_ratio() hits each visit's target mean percent change", {
   withr::local_seed(1)
-  for (study in names(ldl_studies)) {
-    p <- ldl_studies[[study]]
+  for (p in ldl_settings) {
     arms <- names(p$ratio)
     arm <- rep(arms, each = 20000)
     log_ratio <- draw_log_ratio(arm, p)

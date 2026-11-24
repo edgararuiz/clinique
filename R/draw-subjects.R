@@ -1,5 +1,5 @@
 # Draws one row per subject: treatment arm, demographics and any
-# randomization strata. `p` is one entry of `ldl_studies`.
+# randomization strata. `p` is one study's settings.
 draw_subjects <- function(n, p) {
   # Treatment: repeat the ratio pattern, then shuffle. For 2:1 the pattern
   # is active, active, placebo, so leftover subjects go to the active arm.
