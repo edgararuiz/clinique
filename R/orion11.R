@@ -17,8 +17,9 @@
 #' The data is simulated. It is not affiliated with or endorsed by the
 #' trial's sponsor.
 #'
-#' @param n Number of subjects, randomized 1:1. When `n` is odd, the extra
-#'   subject gets inclisiran. ORION-11 randomized 1,617.
+#' @param n Number of subjects, at least 2. Subjects are randomized 1:1;
+#'   when `n` is odd, the extra subject gets inclisiran. ORION-11
+#'   randomized 1,617.
 #'
 #' @returns A tibble with one row per subject per visit, sorted by subject
 #'   and then visit. Columns that aren't numeric are factors:

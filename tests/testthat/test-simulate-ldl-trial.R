@@ -14,3 +14,14 @@ test_that("simulate_ldl_trial() checks `n`", {
   expect_error(simulate_ldl_trial("10", p), "whole number")
   expect_error(simulate_ldl_trial(NA, p), "whole number")
 })
+
+test_that("simulate_ldl_trial() needs one subject per arm at least", {
+  # 2:1 needs 3 subjects
+  expect_error(
+    simulate_ldl_trial(2, odyssey_lt_settings),
+    "at least 3"
+  )
+  withr::local_seed(1)
+  ldl <- simulate_ldl_trial(3, odyssey_lt_settings)
+  expect_equal(nlevels(droplevels(ldl$treatment)), 2)
+})

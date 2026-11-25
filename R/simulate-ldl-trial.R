@@ -20,8 +20,15 @@
 #' @importFrom stats rlnorm rnorm
 #' @noRd
 simulate_ldl_trial <- function(n, p) {
-  if (!is.numeric(n) || length(n) != 1 || is.na(n) || n < 2 || n != round(n)) {
-    stop("`n` must be a whole number of at least 2.", call. = FALSE)
+  # One full ratio block, so every arm gets at least one subject
+  min_n <- sum(p$ratio)
+  if (
+    !is.numeric(n) || length(n) != 1 || is.na(n) || n < min_n || n != round(n)
+  ) {
+    stop(
+      sprintf("`n` must be a whole number of at least %d.", min_n),
+      call. = FALSE
+    )
   }
 
   subjects <- draw_subjects(n, p)

@@ -7,8 +7,9 @@
 simulate_orion11(n)
 }
 \arguments{
-\item{n}{Number of subjects, randomized 1:1. When \code{n} is odd, the extra
-subject gets inclisiran. ORION-11 randomized 1,617.}
+\item{n}{Number of subjects, at least 2. Subjects are randomized 1:1;
+when \code{n} is odd, the extra subject gets inclisiran. ORION-11
+randomized 1,617.}
 }
 \value{
 A tibble with one row per subject per visit, sorted by subject

@@ -7,9 +7,10 @@
 simulate_odyssey_lt(n)
 }
 \arguments{
-\item{n}{Number of subjects, randomized 2:1. When \code{n} is not a multiple
-of 3, the extra subjects get alirocumab. ODYSSEY LONG TERM randomized
-2,341.}
+\item{n}{Number of subjects, at least 3, so that both arms get at
+least one subject. Subjects are randomized 2:1; when \code{n} is not a
+multiple of 3, the extra subjects get alirocumab. ODYSSEY LONG TERM
+randomized 2,341.}
 }
 \value{
 A tibble with one row per subject per visit, sorted by subject

@@ -14,9 +14,10 @@
 #' The data is simulated. It is not affiliated with or endorsed by the
 #' trial's sponsors.
 #'
-#' @param n Number of subjects, randomized 2:1. When `n` is not a multiple
-#'   of 3, the extra subjects get alirocumab. ODYSSEY LONG TERM randomized
-#'   2,341.
+#' @param n Number of subjects, at least 3, so that both arms get at
+#'   least one subject. Subjects are randomized 2:1; when `n` is not a
+#'   multiple of 3, the extra subjects get alirocumab. ODYSSEY LONG TERM
+#'   randomized 2,341.
 #'
 #' @returns A tibble with one row per subject per visit, sorted by subject
 #'   and then visit. Columns that aren't numeric are factors:
