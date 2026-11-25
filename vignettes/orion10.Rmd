@@ -157,6 +157,38 @@ knitr::kable(r, digits = 2)
 Each subject's six log ratios are drawn together from a multivariate
 normal distribution with these SDs and correlations.
 
+### Drawing correlated values
+
+A multivariate normal draw starts from independent standard normal
+values, one per visit, and mixes them with a matrix that carries the SDs
+and correlations. There is more than one way to get that matrix, and the
+choice matters for reproducibility.
+
+A common choice is `MASS::mvrnorm()`, which gets the matrix from an
+eigendecomposition, `eigen()`. Each eigenvector can point either way, and
+different operating systems can pick different directions. Both choices
+are correct, but they turn the same random numbers into different values,
+so the same seed can give different data on macOS, Windows and Linux.
+
+The simulation uses base R's `chol()` instead. It returns the Cholesky
+factor: the upper-triangular matrix `U` with positive values on its
+diagonal such that `t(U) %*% U` equals the covariance matrix. There is
+only one such matrix, so the same seed gives the same data on every
+operating system. Other packages and functions also compute Cholesky
+factors, and some return the lower-triangular form or reorder the
+variables first, which would change the draws, so the simulation always
+uses `chol()` from base R:
+
+```{r}
+sigma <- 0.21^2 * r
+u <- chol(sigma)
+all.equal(t(u) %*% u, sigma, check.attributes = FALSE)
+
+# Three subjects' log ratios for placebo, before adding the means
+z <- matrix(rnorm(3 * 6), ncol = 6)
+z %*% u
+```
+
 Taking the exponential of a log ratio pulls the average percent change
 up. To correct for this, each log-scale mean is lowered by half the
 variance (`sd^2 / 2`). With that correction, the expected percent change

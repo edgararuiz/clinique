@@ -51,6 +51,16 @@ explains each number, its source and the assumptions.
 The data is simulated. It is not affiliated with or endorsed by the
 trial's sponsor.
 }
+\section{Reproducibility}{
+
+Call \code{\link[=set.seed]{set.seed()}} first to get the same data each time. The same seed
+gives the same data on every operating system. The correlated values
+at each visit are drawn with base R's \code{\link[=chol]{chol()}}, which returns the one
+upper-triangular Cholesky factor of the covariance matrix. Methods
+based on \code{\link[=eigen]{eigen()}}, such as \code{MASS::mvrnorm()}, can return different
+factors on different systems, and so different data for the same seed.
+}
+
 \examples{
 set.seed(1)
 orion11 <- simulate_orion11(100)

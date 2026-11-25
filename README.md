@@ -61,12 +61,12 @@ head(ldl)
 #> # A tibble: 6 × 14
 #>   subject_id treatment   age sex   race  visit     day ldl_baseline   ldl
 #>   <fct>      <fct>     <dbl> <fct> <fct> <ord>   <dbl>        <dbl> <dbl>
-#> 1 001-0001   Placebo      62 Male  White Week 4     28         85.0  81.8
-#> 2 001-0001   Placebo      62 Male  White Week 8     56         85.0  85.3
-#> 3 001-0001   Placebo      62 Male  White Week 12    84         85.0  81.3
-#> 4 001-0001   Placebo      62 Male  White Week 16   112         85.0  85.9
-#> 5 001-0001   Placebo      62 Male  White Week 24   168         85.0  61.6
-#> 6 001-0001   Placebo      62 Male  White Week 36   252         85.0  56.0
+#> 1 001-0001   Placebo      62 Male  White Week 4     28         85.0  94.1
+#> 2 001-0001   Placebo      62 Male  White Week 8     56         85.0 104. 
+#> 3 001-0001   Placebo      62 Male  White Week 12    84         85.0 116. 
+#> 4 001-0001   Placebo      62 Male  White Week 16   112         85.0 133. 
+#> 5 001-0001   Placebo      62 Male  White Week 24   168         85.0 114. 
+#> 6 001-0001   Placebo      62 Male  White Week 36   252         85.0  94.0
 #> # ℹ 5 more variables: ldl_pct_change <dbl>, hefh <fct>, prior_mi_stroke <fct>,
 #> #   statin_intensity <fct>, region <fct>
 ```
@@ -92,8 +92,8 @@ means <- emmeans::emmeans(fit, ~ treatment | visit, weights = "proportional")
 #> mmrm() registered as emmeans extension
 diffs <- summary(emmeans::contrast(means, "revpairwise"))
 diffs[diffs$visit == "Week 24", ]
-#>  contrast             visit   estimate   SE   df t.ratio p.value
-#>  Alirocumab - Placebo Week 24    -64.2 1.19 2331 -53.949 <0.0001
+#>  contrast             visit   estimate  SE   df t.ratio p.value
+#>  Alirocumab - Placebo Week 24    -62.7 1.3 2332 -48.439 <0.0001
 #> 
 #> Results are averaged over the levels of: hefh, prior_mi_stroke, statin_intensity, region
 ```

@@ -40,6 +40,14 @@
 #'     lipid-lowering therapy. A randomization stratum, which the trial's
 #'     analysis plan adjusts for.
 #'
+#' @section Reproducibility:
+#' Call [set.seed()] first to get the same data each time. The same seed
+#' gives the same data on every operating system. The correlated values
+#' at each visit are drawn with base R's [chol()], which returns the one
+#' upper-triangular Cholesky factor of the covariance matrix. Methods
+#' based on [eigen()], such as `MASS::mvrnorm()`, can return different
+#' factors on different systems, and so different data for the same seed.
+#'
 #' @references
 #' Statistical analysis plan:
 #' <https://cdn.clinicaltrials.gov/large-docs/00/NCT03400800/SAP_001.pdf>

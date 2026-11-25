@@ -163,7 +163,8 @@ cautious way that pulls inclisiran toward zero, are -49.8 and -49.1 (FDA
 review, Table 10). The simulation aims at the targets, because it has no
 missing values. Each visit's estimate has a standard error of about 1.2,
 though, so one simulated dataset can land a couple of points to either
-side of its target. This one lands about 2 points short at Day 510.
+side of its target. This one lands about 1.6 points beyond the target at
+Day 510.
 
 ## ORION-10 and ORION-11 side by side
 

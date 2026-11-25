@@ -199,7 +199,10 @@ knitr::kable(r, digits = 2)
 
 Each subject's seven log ratios are drawn together from a multivariate
 normal distribution, and each log-scale mean is lowered by half the
-variance so the expected percent change equals the target.
+variance so the expected percent change equals the target. As in every
+study, the correlated values are drawn with base R's `chol()`, so the same
+seed gives the same data on every operating system; `vignette("orion10")`
+explains why.
 
 ## Checking the means
 

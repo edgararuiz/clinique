@@ -46,6 +46,14 @@
 #'   * `region`: `"Eastern Europe"`, `"North America"`, `"Rest of World"` or
 #'     `"Western Europe"`.
 #'
+#' @section Reproducibility:
+#' Call [set.seed()] first to get the same data each time. The same seed
+#' gives the same data on every operating system. The correlated values
+#' at each visit are drawn with base R's [chol()], which returns the one
+#' upper-triangular Cholesky factor of the covariance matrix. Methods
+#' based on [eigen()], such as `MASS::mvrnorm()`, can return different
+#' factors on different systems, and so different data for the same seed.
+#'
 #' @references
 #' FDA statistical review:
 #' <https://www.accessdata.fda.gov/drugsatfda_docs/nda/2015/125559Orig1s000StatR.pdf>
