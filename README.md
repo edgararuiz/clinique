@@ -27,13 +27,14 @@ pak::pak("edgararuiz/clinique")
 
 ## Available studies
 
-Each study has its own function. There are two so far, both trials of
-drugs that lower LDL cholesterol. Both are analyzed with a mixed model
+Each study has its own function. There are three so far, all trials of
+drugs that lower LDL cholesterol. All are analyzed with a mixed model
 for repeated measures (MMRM), but each one teaches something different:
 
 | Function | Trial | Drug | Subjects | Design | What it teaches |
 |----|----|----|----|----|----|
 | `simulate_orion10()` | ORION-10 | Inclisiran, twice a year | 1,561 | 1:1, 6 visits over 18 months | An effect that rises and falls with each dose |
+| `simulate_orion11()` | ORION-11 | Inclisiran, twice a year | 1,617 | 1:1, 7 visits over 18 months | A sister trial of ORION-10 whose analysis plan adds a covariate and keeps Day 90 in the model |
 | `simulate_odyssey_lt()` | ODYSSEY LONG TERM | Alirocumab, every two weeks | 2,341 | 2:1, 7 visits over 1 year | Adjusting for randomization strata, and weighting means by them |
 
 The difference in dosing shows in the data. Inclisiran’s effect is
@@ -102,4 +103,5 @@ Each study has an article that explains every number in the simulation,
 where it came from, and what was assumed:
 
 1.  ORION-10: `vignette("orion10", package = "clinique")`.
-2.  ODYSSEY LONG TERM: `vignette("odyssey-lt", package = "clinique")`.
+2.  ORION-11: `vignette("orion11", package = "clinique")`.
+3.  ODYSSEY LONG TERM: `vignette("odyssey-lt", package = "clinique")`.

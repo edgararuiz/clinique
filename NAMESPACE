@@ -2,6 +2,7 @@
 
 export(simulate_odyssey_lt)
 export(simulate_orion10)
+export(simulate_orion11)
 importFrom(stats,
   rlnorm,
   rnorm

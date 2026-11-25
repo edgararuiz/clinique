@@ -23,12 +23,14 @@
 #'   and then visit. Columns that aren't numeric are factors:
 #'
 #'   * `subject_id`: Subject identifier, such as `"001-0001"`.
-#'   * `treatment`: `"Placebo"` or `"Inclisiran"`, with placebo as the reference level.
+#'   * `treatment`: `"Placebo"` or `"Inclisiran"`, with placebo as the
+#'     reference level.
 #'   * `age`: Age in years.
 #'   * `sex`: `"Female"` or `"Male"`.
 #'   * `race`: `"Black"`, `"Other"` or `"White"`.
-#'   * `visit`: Ordered factor, `"Day 150"` to `"Day 540"`. LDL was also measured on Day 90, but
-#     the trial's analysis plan leaves it out of the model.
+#'   * `visit`: Ordered factor, `"Day 150"` to `"Day 540"`. LDL was also
+#'     measured on Day 90, but the trial's analysis plan leaves it out of
+#'     the model.
 #'   * `day`: Study day of the visit.
 #'   * `ldl_baseline`: LDL at baseline, in mg/dL.
 #'   * `ldl`: LDL at the visit, in mg/dL.

@@ -16,11 +16,14 @@ A tibble with one row per subject per visit, sorted by subject
 and then visit. Columns that aren't numeric are factors:
 \itemize{
 \item \code{subject_id}: Subject identifier, such as \code{"001-0001"}.
-\item \code{treatment}: \code{"Placebo"} or \code{"Alirocumab"}, with placebo as the reference level.
+\item \code{treatment}: \code{"Placebo"} or \code{"Alirocumab"}, with placebo as the
+reference level.
 \item \code{age}: Age in years.
 \item \code{sex}: \code{"Female"} or \code{"Male"}.
 \item \code{race}: \code{"Black"}, \code{"Other"} or \code{"White"}.
-\item \code{visit}: Ordered factor, \code{"Week 4"} to \code{"Week 52"}. LDL was also measured at Weeks 64
+\item \code{visit}: Ordered factor, \code{"Week 4"} to \code{"Week 52"}. LDL was also
+measured at Weeks 64 and 78, but the trial's primary model stops at
+Week 52.
 \item \code{day}: Nominal study day of the visit, seven times the week.
 \item \code{ldl_baseline}: LDL at baseline, in mg/dL.
 \item \code{ldl}: LDL at the visit, in mg/dL.

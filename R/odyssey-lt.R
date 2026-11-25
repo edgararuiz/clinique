@@ -22,12 +22,14 @@
 #'   and then visit. Columns that aren't numeric are factors:
 #'
 #'   * `subject_id`: Subject identifier, such as `"001-0001"`.
-#'   * `treatment`: `"Placebo"` or `"Alirocumab"`, with placebo as the reference level.
+#'   * `treatment`: `"Placebo"` or `"Alirocumab"`, with placebo as the
+#'     reference level.
 #'   * `age`: Age in years.
 #'   * `sex`: `"Female"` or `"Male"`.
 #'   * `race`: `"Black"`, `"Other"` or `"White"`.
-#'   * `visit`: Ordered factor, `"Week 4"` to `"Week 52"`. LDL was also measured at Weeks 64
-#     and 78, but the trial's primary model stops at Week 52.
+#'   * `visit`: Ordered factor, `"Week 4"` to `"Week 52"`. LDL was also
+#'     measured at Weeks 64 and 78, but the trial's primary model stops at
+#'     Week 52.
 #'   * `day`: Nominal study day of the visit, seven times the week.
 #'   * `ldl_baseline`: LDL at baseline, in mg/dL.
 #'   * `ldl`: LDL at the visit, in mg/dL.

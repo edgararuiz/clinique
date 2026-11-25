@@ -2,6 +2,7 @@
 
 ldl_settings <- list(
   orion10 = orion10_settings,
+  orion11 = orion11_settings,
   odyssey_lt = odyssey_lt_settings
 )
 

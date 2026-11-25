@@ -129,11 +129,15 @@ percent change itself. For example, a log ratio of -0.69 is a ratio of
    arms have a long right tail.
 
 The SD of the log ratio for each arm comes from the quartiles in that
-figure, read by eye:
+figure. The simulation uses SDs read by eye: 0.21 for placebo and 0.53 for
+inclisiran. Measuring the figure from its image, using the axis tick
+marks to turn pixels into percentages, later gave these quartiles:
 
-1. Placebo: quartiles about +11%, -5% and -16%, so an SD of about 0.21.
-2. Inclisiran: quartiles about -43%, -59% and -72%, so an SD of about
-   0.53.
+1. Placebo: about +14%, -3% and -17%, so an SD of about 0.23.
+2. Inclisiran: about -50%, -64% and -75%, so an SD of about 0.52.
+
+The measured SDs are within 0.02 of the ones the simulation uses, well
+inside the reading error, so the simulation keeps them.
 
 The figure only covers Day 510, so the same SD is used at every visit
 (assumed).
