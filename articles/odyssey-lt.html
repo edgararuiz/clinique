@@ -7,8 +7,8 @@
 <title>Simulating ODYSSEY LONG TERM • clinique</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
-<link href="../deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.5.0/font.css" rel="stylesheet">
+<link href="../deps/Source_Code_Pro-0.5.0/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Simulating ODYSSEY LONG TERM">
@@ -36,6 +36,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/odyssey-lt.html">Simulating ODYSSEY LONG TERM</a></li>
     <li><a class="dropdown-item" href="../articles/orion10.html">Simulating ORION-10</a></li>
+    <li><a class="dropdown-item" href="../articles/orion11.html">Simulating ORION-11</a></li>
   </ul>
 </li>
       </ul>
@@ -66,12 +67,12 @@
 
     
     
-<p><code>simulate_ldl(n, study = "odyssey_lt")</code> makes up LDL
-cholesterol data that looks like the ODYSSEY LONG TERM trial. This
-article explains how. It lists each number the simulation uses, where
-the number came from, and what was assumed. It follows the same
-structure as <code><a href="../articles/orion10.html">vignette("orion10")</a></code>, so you can compare the
-two side by side.</p>
+<p><code>simulate_odyssey_lt(n)</code> makes up LDL cholesterol data
+that looks like the ODYSSEY LONG TERM trial. This article explains how.
+It lists each number the simulation uses, where the number came from,
+and what was assumed. It follows the same structure as
+<code><a href="../articles/orion10.html">vignette("orion10")</a></code>, so you can compare the two side by
+side.</p>
 <p>The data is simulated. It is not affiliated with or endorsed by the
 trial’s sponsors.</p>
 <div class="section level2">
@@ -115,29 +116,19 @@ gives it.</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/edgararuiz/clinique" class="external-link">clinique</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">ldl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simulate_ldl.html">simulate_ldl</a></span><span class="op">(</span><span class="fl">2341</span>, study <span class="op">=</span> <span class="st">"odyssey_lt"</span><span class="op">)</span></span>
+<span><span class="va">ldl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simulate_odyssey_lt.html">simulate_odyssey_lt</a></span><span class="op">(</span><span class="fl">2341</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ldl</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   subject_id treatment age  sex  race   visit day ldl_baseline</span></span>
-<span><span class="co">#&gt; 1   001-0001   Placebo  62 Male White  Week 4  28     84.99889</span></span>
-<span><span class="co">#&gt; 2   001-0001   Placebo  62 Male White  Week 8  56     84.99889</span></span>
-<span><span class="co">#&gt; 3   001-0001   Placebo  62 Male White Week 12  84     84.99889</span></span>
-<span><span class="co">#&gt; 4   001-0001   Placebo  62 Male White Week 16 112     84.99889</span></span>
-<span><span class="co">#&gt; 5   001-0001   Placebo  62 Male White Week 24 168     84.99889</span></span>
-<span><span class="co">#&gt; 6   001-0001   Placebo  62 Male White Week 36 252     84.99889</span></span>
-<span><span class="co">#&gt;        ldl ldl_pct_change hefh prior_mi_stroke statin_intensity</span></span>
-<span><span class="co">#&gt; 1 64.67659     -23.908900   No              No     Low/moderate</span></span>
-<span><span class="co">#&gt; 2 68.25461     -19.699416   No              No     Low/moderate</span></span>
-<span><span class="co">#&gt; 3 78.92457      -7.146352   No              No     Low/moderate</span></span>
-<span><span class="co">#&gt; 4 70.22783     -17.377949   No              No     Low/moderate</span></span>
-<span><span class="co">#&gt; 5 68.53246     -19.372529   No              No     Low/moderate</span></span>
-<span><span class="co">#&gt; 6 73.73389     -13.253116   No              No     Low/moderate</span></span>
-<span><span class="co">#&gt;           region</span></span>
-<span><span class="co">#&gt; 1 Eastern Europe</span></span>
-<span><span class="co">#&gt; 2 Eastern Europe</span></span>
-<span><span class="co">#&gt; 3 Eastern Europe</span></span>
-<span><span class="co">#&gt; 4 Eastern Europe</span></span>
-<span><span class="co">#&gt; 5 Eastern Europe</span></span>
-<span><span class="co">#&gt; 6 Eastern Europe</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 14</span></span></span>
+<span><span class="co">#&gt;   subject_id treatment   age sex   race  visit   day ldl_baseline   ldl</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 001-0001   Placebo      62 Male  White Week…    28         85.0  94.1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 001-0001   Placebo      62 Male  White Week…    56         85.0 104. </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 001-0001   Placebo      62 Male  White Week…    84         85.0 116. </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 001-0001   Placebo      62 Male  White Week…   112         85.0 133. </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 001-0001   Placebo      62 Male  White Week…   168         85.0 114. </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 001-0001   Placebo      62 Male  White Week…   252         85.0  94.0</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 5 more variables: ldl_pct_change &lt;dbl&gt;, hefh &lt;fct&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   prior_mi_stroke &lt;fct&gt;, statin_intensity &lt;fct&gt;, region &lt;fct&gt;</span></span></span></code></pre></div>
 <p>There is one row per subject per visit. The visits are Weeks 4, 8,
 12, 16, 24, 36 and 52. The <code>day</code> column is the nominal study
 day, seven times the week: Week 24 is day 168. The trial also measured
@@ -392,7 +383,10 @@ days apart, higher for nearer visits and lower for farther ones.</p>
 </table>
 <p>Each subject’s seven log ratios are drawn together from a
 multivariate normal distribution, and each log-scale mean is lowered by
-half the variance so the expected percent change equals the target.</p>
+half the variance so the expected percent change equals the target. As
+in every study, the correlated values are drawn with base R’s
+<code><a href="https://rdrr.io/r/base/chol.html" class="external-link">chol()</a></code>, so the same seed gives the same data on every
+operating system; <code><a href="../articles/orion10.html">vignette("orion10")</a></code> explains why.</p>
 </div>
 </div>
 <div class="section level2">
@@ -403,13 +397,13 @@ half the variance so the expected percent change equals the target.</p>
 <code class="sourceCode R"><span><span class="va">observed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="va">ldl_pct_change</span> <span class="op">~</span> <span class="va">visit</span> <span class="op">+</span> <span class="va">treatment</span>, data <span class="op">=</span> <span class="va">ldl</span>, FUN <span class="op">=</span> <span class="va">mean</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/reshape.html" class="external-link">reshape</a></span><span class="op">(</span><span class="va">observed</span>, idvar <span class="op">=</span> <span class="st">"visit"</span>, timevar <span class="op">=</span> <span class="st">"treatment"</span>, direction <span class="op">=</span> <span class="st">"wide"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     visit ldl_pct_change.Placebo ldl_pct_change.Alirocumab</span></span>
-<span><span class="co">#&gt; 1  Week 4              1.1484275                 -64.31839</span></span>
-<span><span class="co">#&gt; 2  Week 8              0.8242056                 -65.52504</span></span>
-<span><span class="co">#&gt; 3 Week 12              0.9538569                 -63.95962</span></span>
-<span><span class="co">#&gt; 4 Week 16              0.5300950                 -64.96155</span></span>
-<span><span class="co">#&gt; 5 Week 24              1.2794846                 -61.12624</span></span>
-<span><span class="co">#&gt; 6 Week 36             -0.6486210                 -60.77591</span></span>
-<span><span class="co">#&gt; 7 Week 52              3.9355577                 -56.70056</span></span></code></pre></div>
+<span><span class="co">#&gt; 1  Week 4              1.9036096                 -65.97831</span></span>
+<span><span class="co">#&gt; 2  Week 8              1.1579529                 -66.64543</span></span>
+<span><span class="co">#&gt; 3 Week 12              1.3454897                 -64.02381</span></span>
+<span><span class="co">#&gt; 4 Week 16              0.9403302                 -65.18838</span></span>
+<span><span class="co">#&gt; 5 Week 24              1.7262118                 -61.01690</span></span>
+<span><span class="co">#&gt; 6 Week 36              0.1263521                 -61.04330</span></span>
+<span><span class="co">#&gt; 7 Week 52              4.7422050                 -56.86260</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="fitting-the-saps-model">Fitting the SAP’s model<a class="anchor" aria-label="anchor" href="#fitting-the-saps-model"></a>
@@ -423,9 +417,7 @@ half the variance so the expected percent change equals the target.</p>
 <p>It uses an unstructured covariance, REML, and Satterthwaite degrees
 of freedom. ORION-10 used Kenward-Roger instead.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ldl</span><span class="op">$</span><span class="va">subject_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">ldl</span><span class="op">$</span><span class="va">subject_id</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">mmrm</span><span class="fu">::</span><span class="fu"><a href="https://openpharma.github.io/mmrm/latest-tag/reference/mmrm.html" class="external-link">mmrm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">mmrm</span><span class="fu">::</span><span class="fu"><a href="https://openpharma.github.io/mmrm/latest-tag/reference/mmrm.html" class="external-link">mmrm</a></span><span class="op">(</span></span>
 <span>  <span class="va">ldl_pct_change</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">*</span> <span class="va">visit</span> <span class="op">+</span></span>
 <span>    <span class="va">hefh</span> <span class="op">*</span> <span class="va">visit</span> <span class="op">+</span></span>
 <span>    <span class="va">prior_mi_stroke</span> <span class="op">*</span> <span class="va">visit</span> <span class="op">+</span></span>
@@ -456,31 +448,31 @@ population that doesn’t exist. In emmeans, this is
 <span><span class="va">diffs</span></span>
 <span><span class="co">#&gt; visit = Week 4:</span></span>
 <span><span class="co">#&gt;  contrast             estimate   SE   df t.ratio p.value</span></span>
-<span><span class="co">#&gt;  Alirocumab - Placebo    -65.5 1.13 2329 -57.812 &lt;0.0001</span></span>
+<span><span class="co">#&gt;  Alirocumab - Placebo    -67.9 1.12 2332 -60.834 &lt;0.0001</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; visit = Week 8:</span></span>
 <span><span class="co">#&gt;  contrast             estimate   SE   df t.ratio p.value</span></span>
-<span><span class="co">#&gt;  Alirocumab - Placebo    -66.4 1.09 2328 -60.782 &lt;0.0001</span></span>
+<span><span class="co">#&gt;  Alirocumab - Placebo    -67.8 1.13 2332 -60.199 &lt;0.0001</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; visit = Week 12:</span></span>
 <span><span class="co">#&gt;  contrast             estimate   SE   df t.ratio p.value</span></span>
-<span><span class="co">#&gt;  Alirocumab - Placebo    -65.0 1.11 2328 -58.750 &lt;0.0001</span></span>
+<span><span class="co">#&gt;  Alirocumab - Placebo    -65.3 1.21 2332 -53.943 &lt;0.0001</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; visit = Week 16:</span></span>
 <span><span class="co">#&gt;  contrast             estimate   SE   df t.ratio p.value</span></span>
-<span><span class="co">#&gt;  Alirocumab - Placebo    -65.6 1.12 2329 -58.769 &lt;0.0001</span></span>
+<span><span class="co">#&gt;  Alirocumab - Placebo    -66.1 1.18 2332 -56.184 &lt;0.0001</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; visit = Week 24:</span></span>
 <span><span class="co">#&gt;  contrast             estimate   SE   df t.ratio p.value</span></span>
-<span><span class="co">#&gt;  Alirocumab - Placebo    -62.5 1.22 2329 -51.071 &lt;0.0001</span></span>
+<span><span class="co">#&gt;  Alirocumab - Placebo    -62.7 1.30 2332 -48.439 &lt;0.0001</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; visit = Week 36:</span></span>
 <span><span class="co">#&gt;  contrast             estimate   SE   df t.ratio p.value</span></span>
-<span><span class="co">#&gt;  Alirocumab - Placebo    -60.1 1.20 2329 -50.258 &lt;0.0001</span></span>
+<span><span class="co">#&gt;  Alirocumab - Placebo    -61.2 1.21 2332 -50.669 &lt;0.0001</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; visit = Week 52:</span></span>
 <span><span class="co">#&gt;  contrast             estimate   SE   df t.ratio p.value</span></span>
-<span><span class="co">#&gt;  Alirocumab - Placebo    -60.6 1.38 2330 -44.008 &lt;0.0001</span></span>
+<span><span class="co">#&gt;  Alirocumab - Placebo    -61.6 1.35 2332 -45.629 &lt;0.0001</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Results are averaged over the levels of: hefh, prior_mi_stroke, statin_intensity, region</span></span></code></pre></div>
 <p>The weights change each arm’s mean, but not the difference between
@@ -492,7 +484,7 @@ arms, because the strata have the same effect in both arms.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">diffs</span><span class="op">[</span><span class="va">diffs</span><span class="op">$</span><span class="va">visit</span> <span class="op">==</span> <span class="st">"Week 24"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"estimate"</span>, <span class="st">"SE"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;    estimate       SE</span></span>
-<span><span class="co">#&gt; 5 -62.47284 1.223259</span></span></code></pre></div>
+<span><span class="co">#&gt; 5 -62.73688 1.295172</span></span></code></pre></div>
 <p>There are three numbers to compare it with:</p>
 <ol style="list-style-type: decimal">
 <li>About -62.7: the Figure 7 target, the observed means at Week 24. The

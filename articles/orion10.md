@@ -1,9 +1,8 @@
 # Simulating ORION-10
 
-`simulate_ldl(n, study = "orion10")` makes up LDL cholesterol data that
-looks like the ORION-10 trial. This article explains how. It lists each
-number the simulation uses, where the number came from, and what was
-assumed.
+`simulate_orion10(n)` makes up LDL cholesterol data that looks like the
+ORION-10 trial. This article explains how. It lists each number the
+simulation uses, where the number came from, and what was assumed.
 
 The data is simulated. It is not affiliated with or endorsed by the
 trial’s sponsor.
@@ -41,22 +40,18 @@ standard deviations (SDs). “Assumed” means no public source gives it.
 library(clinique)
 
 set.seed(1)
-ldl <- simulate_ldl(1561)
+ldl <- simulate_orion10(1561)
 head(ldl)
-#>   subject_id  treatment age  sex  race   visit day ldl_baseline
-#> 1   001-0001 Inclisiran  78 Male White Day 150 150     84.68047
-#> 2   001-0001 Inclisiran  78 Male White Day 270 270     84.68047
-#> 3   001-0001 Inclisiran  78 Male White Day 330 330     84.68047
-#> 4   001-0001 Inclisiran  78 Male White Day 450 450     84.68047
-#> 5   001-0001 Inclisiran  78 Male White Day 510 510     84.68047
-#> 6   001-0001 Inclisiran  78 Male White Day 540 540     84.68047
-#>        ldl ldl_pct_change
-#> 1 25.36234      -70.04937
-#> 2 39.64797      -53.17932
-#> 3 23.01864      -72.81706
-#> 4 30.83611      -63.58534
-#> 5 15.58256      -81.59841
-#> 6 18.90423      -77.67581
+#> # A tibble: 6 × 10
+#>   subject_id treatment   age sex   race  visit   day ldl_baseline   ldl
+#>   <fct>      <fct>     <dbl> <fct> <fct> <ord> <dbl>        <dbl> <dbl>
+#> 1 001-0001   Inclisir…    78 Male  White Day …   150         84.7  44.2
+#> 2 001-0001   Inclisir…    78 Male  White Day …   270         84.7  37.8
+#> 3 001-0001   Inclisir…    78 Male  White Day …   330         84.7  27.8
+#> 4 001-0001   Inclisir…    78 Male  White Day …   450         84.7  42.2
+#> 5 001-0001   Inclisir…    78 Male  White Day …   510         84.7  51.2
+#> 6 001-0001   Inclisir…    78 Male  White Day …   540         84.7  68.7
+#> # ℹ 1 more variable: ldl_pct_change <dbl>
 ```
 
 There is one row per subject per visit. The visits are Days 150, 270,
@@ -133,11 +128,15 @@ percent change itself. For example, a log ratio of -0.69 is a ratio of
     Both arms have a long right tail.
 
 The SD of the log ratio for each arm comes from the quartiles in that
-figure, read by eye:
+figure. The simulation uses SDs read by eye: 0.21 for placebo and 0.53
+for inclisiran. Measuring the figure from its image, using the axis tick
+marks to turn pixels into percentages, later gave these quartiles:
 
-1.  Placebo: quartiles about +11%, -5% and -16%, so an SD of about 0.21.
-2.  Inclisiran: quartiles about -43%, -59% and -72%, so an SD of about
-    0.53.
+1.  Placebo: about +14%, -3% and -17%, so an SD of about 0.23.
+2.  Inclisiran: about -50%, -64% and -75%, so an SD of about 0.52.
+
+The measured SDs are within 0.02 of the ones the simulation uses, well
+inside the reading error, so the simulation keeps them.
 
 The figure only covers Day 510, so the same SD is used at every visit
 (assumed).
@@ -159,6 +158,52 @@ for nearer visits and lower for farther ones.
 Each subject’s six log ratios are drawn together from a multivariate
 normal distribution with these SDs and correlations.
 
+### Drawing correlated values
+
+A multivariate normal draw starts from independent standard normal
+values, one per visit, and mixes them with a matrix that carries the SDs
+and correlations. There is more than one way to get that matrix, and the
+choice matters for reproducibility.
+
+A common choice is
+[`MASS::mvrnorm()`](https://rdrr.io/pkg/MASS/man/mvrnorm.html), which
+gets the matrix from an eigendecomposition,
+[`eigen()`](https://rdrr.io/r/base/eigen.html). Each eigenvector can
+point either way, and different operating systems can pick different
+directions. Both choices are correct, but they turn the same random
+numbers into different values, so the same seed can give different data
+on macOS, Windows and Linux.
+
+The simulation uses base R’s
+[`chol()`](https://rdrr.io/r/base/chol.html) instead. It returns the
+Cholesky factor: the upper-triangular matrix `U` with positive values on
+its diagonal such that `t(U) %*% U` equals the covariance matrix. There
+is only one such matrix, so the same seed gives the same data on every
+operating system. Other packages and functions also compute Cholesky
+factors, and some return the lower-triangular form or reorder the
+variables first, which would change the draws, so the simulation always
+uses [`chol()`](https://rdrr.io/r/base/chol.html) from base R:
+
+``` r
+
+sigma <- 0.21^2 * r
+u <- chol(sigma)
+all.equal(t(u) %*% u, sigma, check.attributes = FALSE)
+#> [1] TRUE
+
+# Three subjects' log ratios for placebo, before adding the means
+z <- matrix(rnorm(3 * 6), ncol = 6)
+z %*% u
+#>           Day 150     Day 270    Day 330     Day 450     Day 510
+#> [1,]  0.151163983  0.05547910 0.02177950  0.11458818 -0.01274272
+#> [2,]  0.109610951  0.07192938 0.20694003  0.07681469  0.08472587
+#> [3,] -0.003806269 -0.04063802 0.02029003 -0.01177654 -0.13189043
+#>          Day 540
+#> [1,] -0.08788813
+#> [2,]  0.20425785
+#> [3,] -0.06156666
+```
+
 Taking the exponential of a log ratio pulls the average percent change
 up. To correct for this, each log-scale mean is lowered by half the
 variance (`sd^2 / 2`). With that correction, the expected percent change
@@ -178,12 +223,12 @@ The simulated means land close to the targets:
 observed <- aggregate(ldl_pct_change ~ visit + treatment, data = ldl, FUN = mean)
 reshape(observed, idvar = "visit", timevar = "treatment", direction = "wide")
 #>     visit ldl_pct_change.Placebo ldl_pct_change.Inclisiran
-#> 1 Day 150               1.505769                 -58.25524
-#> 2 Day 270               5.386907                 -46.56692
-#> 3 Day 330               6.601761                 -55.17030
-#> 4 Day 450               3.209258                 -45.38831
-#> 5 Day 510               1.821706                 -55.51716
-#> 6 Day 540               1.832897                 -53.00408
+#> 1 Day 150              0.6610071                 -59.51710
+#> 2 Day 270              4.1789412                 -49.17163
+#> 3 Day 330              4.9699932                 -56.61357
+#> 4 Day 450              2.4044646                 -46.98384
+#> 5 Day 510              0.6983163                 -56.61450
+#> 6 Day 540              0.5236311                 -54.05911
 ```
 
 ## Fitting the SAP’s model
@@ -191,8 +236,6 @@ reshape(observed, idvar = "visit", timevar = "treatment", direction = "wide")
 The SAP’s MMRM, fitted with the `mmrm` package:
 
 ``` r
-
-ldl$subject_id <- factor(ldl$subject_id)
 
 fit <- mmrm::mmrm(
   ldl_pct_change ~ treatment * visit + ldl_baseline + us(visit | subject_id),
@@ -211,27 +254,27 @@ diffs <- summary(emmeans::contrast(means, "revpairwise"))
 diffs
 #> visit = Day 150:
 #>  contrast             estimate   SE   df t.ratio p.value
-#>  Inclisiran - Placebo    -59.8 1.16 1559 -51.635 <0.0001
+#>  Inclisiran - Placebo    -60.2 1.17 1559 -51.243 <0.0001
 #> 
 #> visit = Day 270:
 #>  contrast             estimate   SE   df t.ratio p.value
-#>  Inclisiran - Placebo    -51.9 1.36 1560 -38.165 <0.0001
+#>  Inclisiran - Placebo    -53.4 1.33 1559 -40.194 <0.0001
 #> 
 #> visit = Day 330:
 #>  contrast             estimate   SE   df t.ratio p.value
-#>  Inclisiran - Placebo    -61.8 1.22 1559 -50.824 <0.0001
+#>  Inclisiran - Placebo    -61.6 1.20 1558 -51.409 <0.0001
 #> 
 #> visit = Day 450:
 #>  contrast             estimate   SE   df t.ratio p.value
-#>  Inclisiran - Placebo    -48.6 1.34 1560 -36.176 <0.0001
+#>  Inclisiran - Placebo    -49.4 1.33 1559 -37.106 <0.0001
 #> 
 #> visit = Day 510:
 #>  contrast             estimate   SE   df t.ratio p.value
-#>  Inclisiran - Placebo    -57.3 1.20 1560 -47.578 <0.0001
+#>  Inclisiran - Placebo    -57.3 1.17 1558 -48.908 <0.0001
 #> 
 #> visit = Day 540:
 #>  contrast             estimate   SE   df t.ratio p.value
-#>  Inclisiran - Placebo    -54.8 1.25 1560 -43.733 <0.0001
+#>  Inclisiran - Placebo    -54.6 1.22 1559 -44.620 <0.0001
 ```
 
 The trial had two co-primary endpoints:
@@ -250,7 +293,7 @@ c(
   time_adjusted = mean(diffs$estimate)
 )
 #>       day_510 time_adjusted 
-#>     -57.33066     -55.70184
+#>     -57.32027     -56.07347
 ```
 
 The Figure 2 targets give about -57.7 at Day 510 and -56.3

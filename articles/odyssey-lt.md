@@ -1,9 +1,9 @@
 # Simulating ODYSSEY LONG TERM
 
-`simulate_ldl(n, study = "odyssey_lt")` makes up LDL cholesterol data
-that looks like the ODYSSEY LONG TERM trial. This article explains how.
-It lists each number the simulation uses, where the number came from,
-and what was assumed. It follows the same structure as
+`simulate_odyssey_lt(n)` makes up LDL cholesterol data that looks like
+the ODYSSEY LONG TERM trial. This article explains how. It lists each
+number the simulation uses, where the number came from, and what was
+assumed. It follows the same structure as
 [`vignette("orion10")`](https://edgararuiz.github.io/clinique/articles/orion10.md),
 so you can compare the two side by side.
 
@@ -51,29 +51,19 @@ gives it.
 library(clinique)
 
 set.seed(1)
-ldl <- simulate_ldl(2341, study = "odyssey_lt")
+ldl <- simulate_odyssey_lt(2341)
 head(ldl)
-#>   subject_id treatment age  sex  race   visit day ldl_baseline
-#> 1   001-0001   Placebo  62 Male White  Week 4  28     84.99889
-#> 2   001-0001   Placebo  62 Male White  Week 8  56     84.99889
-#> 3   001-0001   Placebo  62 Male White Week 12  84     84.99889
-#> 4   001-0001   Placebo  62 Male White Week 16 112     84.99889
-#> 5   001-0001   Placebo  62 Male White Week 24 168     84.99889
-#> 6   001-0001   Placebo  62 Male White Week 36 252     84.99889
-#>        ldl ldl_pct_change hefh prior_mi_stroke statin_intensity
-#> 1 64.67659     -23.908900   No              No     Low/moderate
-#> 2 68.25461     -19.699416   No              No     Low/moderate
-#> 3 78.92457      -7.146352   No              No     Low/moderate
-#> 4 70.22783     -17.377949   No              No     Low/moderate
-#> 5 68.53246     -19.372529   No              No     Low/moderate
-#> 6 73.73389     -13.253116   No              No     Low/moderate
-#>           region
-#> 1 Eastern Europe
-#> 2 Eastern Europe
-#> 3 Eastern Europe
-#> 4 Eastern Europe
-#> 5 Eastern Europe
-#> 6 Eastern Europe
+#> # A tibble: 6 × 14
+#>   subject_id treatment   age sex   race  visit   day ldl_baseline   ldl
+#>   <fct>      <fct>     <dbl> <fct> <fct> <ord> <dbl>        <dbl> <dbl>
+#> 1 001-0001   Placebo      62 Male  White Week…    28         85.0  94.1
+#> 2 001-0001   Placebo      62 Male  White Week…    56         85.0 104. 
+#> 3 001-0001   Placebo      62 Male  White Week…    84         85.0 116. 
+#> 4 001-0001   Placebo      62 Male  White Week…   112         85.0 133. 
+#> 5 001-0001   Placebo      62 Male  White Week…   168         85.0 114. 
+#> 6 001-0001   Placebo      62 Male  White Week…   252         85.0  94.0
+#> # ℹ 5 more variables: ldl_pct_change <dbl>, hefh <fct>,
+#> #   prior_mi_stroke <fct>, statin_intensity <fct>, region <fct>
 ```
 
 There is one row per subject per visit. The visits are Weeks 4, 8, 12,
@@ -225,7 +215,12 @@ days apart, higher for nearer visits and lower for farther ones.
 
 Each subject’s seven log ratios are drawn together from a multivariate
 normal distribution, and each log-scale mean is lowered by half the
-variance so the expected percent change equals the target.
+variance so the expected percent change equals the target. As in every
+study, the correlated values are drawn with base R’s
+[`chol()`](https://rdrr.io/r/base/chol.html), so the same seed gives the
+same data on every operating system;
+[`vignette("orion10")`](https://edgararuiz.github.io/clinique/articles/orion10.md)
+explains why.
 
 ## Checking the means
 
@@ -236,13 +231,13 @@ The simulated means land close to the targets:
 observed <- aggregate(ldl_pct_change ~ visit + treatment, data = ldl, FUN = mean)
 reshape(observed, idvar = "visit", timevar = "treatment", direction = "wide")
 #>     visit ldl_pct_change.Placebo ldl_pct_change.Alirocumab
-#> 1  Week 4              1.1484275                 -64.31839
-#> 2  Week 8              0.8242056                 -65.52504
-#> 3 Week 12              0.9538569                 -63.95962
-#> 4 Week 16              0.5300950                 -64.96155
-#> 5 Week 24              1.2794846                 -61.12624
-#> 6 Week 36             -0.6486210                 -60.77591
-#> 7 Week 52              3.9355577                 -56.70056
+#> 1  Week 4              1.9036096                 -65.97831
+#> 2  Week 8              1.1579529                 -66.64543
+#> 3 Week 12              1.3454897                 -64.02381
+#> 4 Week 16              0.9403302                 -65.18838
+#> 5 Week 24              1.7262118                 -61.01690
+#> 6 Week 36              0.1263521                 -61.04330
+#> 7 Week 52              4.7422050                 -56.86260
 ```
 
 ## Fitting the SAP’s model
@@ -257,8 +252,6 @@ It uses an unstructured covariance, REML, and Satterthwaite degrees of
 freedom. ORION-10 used Kenward-Roger instead.
 
 ``` r
-
-ldl$subject_id <- factor(ldl$subject_id)
 
 fit <- mmrm::mmrm(
   ldl_pct_change ~ treatment * visit +
@@ -295,31 +288,31 @@ diffs <- summary(emmeans::contrast(means, "revpairwise"))
 diffs
 #> visit = Week 4:
 #>  contrast             estimate   SE   df t.ratio p.value
-#>  Alirocumab - Placebo    -65.5 1.13 2329 -57.812 <0.0001
+#>  Alirocumab - Placebo    -67.9 1.12 2332 -60.834 <0.0001
 #> 
 #> visit = Week 8:
 #>  contrast             estimate   SE   df t.ratio p.value
-#>  Alirocumab - Placebo    -66.4 1.09 2328 -60.782 <0.0001
+#>  Alirocumab - Placebo    -67.8 1.13 2332 -60.199 <0.0001
 #> 
 #> visit = Week 12:
 #>  contrast             estimate   SE   df t.ratio p.value
-#>  Alirocumab - Placebo    -65.0 1.11 2328 -58.750 <0.0001
+#>  Alirocumab - Placebo    -65.3 1.21 2332 -53.943 <0.0001
 #> 
 #> visit = Week 16:
 #>  contrast             estimate   SE   df t.ratio p.value
-#>  Alirocumab - Placebo    -65.6 1.12 2329 -58.769 <0.0001
+#>  Alirocumab - Placebo    -66.1 1.18 2332 -56.184 <0.0001
 #> 
 #> visit = Week 24:
 #>  contrast             estimate   SE   df t.ratio p.value
-#>  Alirocumab - Placebo    -62.5 1.22 2329 -51.071 <0.0001
+#>  Alirocumab - Placebo    -62.7 1.30 2332 -48.439 <0.0001
 #> 
 #> visit = Week 36:
 #>  contrast             estimate   SE   df t.ratio p.value
-#>  Alirocumab - Placebo    -60.1 1.20 2329 -50.258 <0.0001
+#>  Alirocumab - Placebo    -61.2 1.21 2332 -50.669 <0.0001
 #> 
 #> visit = Week 52:
 #>  contrast             estimate   SE   df t.ratio p.value
-#>  Alirocumab - Placebo    -60.6 1.38 2330 -44.008 <0.0001
+#>  Alirocumab - Placebo    -61.6 1.35 2332 -45.629 <0.0001
 #> 
 #> Results are averaged over the levels of: hefh, prior_mi_stroke, statin_intensity, region
 ```
@@ -333,7 +326,7 @@ because the strata have the same effect in both arms.
 
 diffs[diffs$visit == "Week 24", c("estimate", "SE")]
 #>    estimate       SE
-#> 5 -62.47284 1.223259
+#> 5 -62.73688 1.295172
 ```
 
 There are three numbers to compare it with:
