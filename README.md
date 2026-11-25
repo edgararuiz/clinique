@@ -5,6 +5,9 @@
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/edgararuiz/clinique/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/edgararuiz/clinique/actions/workflows/R-CMD-check.yaml)
+[![Test
+coverage](https://raw.githubusercontent.com/edgararuiz/clinique/badges/coverage.svg)](https://github.com/edgararuiz/clinique/actions/workflows/test-coverage-badge.yaml)
 <!-- badges: end -->
 
 This package gives you data shaped like a real clinical trial, so you
