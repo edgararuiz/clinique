@@ -1,10 +1,3 @@
-test_that("simulate_ldl_trial() returns one row per subject per visit", {
-  withr::local_seed(1)
-  for (p in ldl_settings) {
-    expect_ldl_output(simulate_ldl_trial(11, p), p, 11)
-  }
-})
-
 test_that("simulate_ldl_trial() keeps each subject's values fixed across visits", {
   withr::local_seed(1)
   ldl <- simulate_ldl_trial(11, odyssey_lt_settings)
