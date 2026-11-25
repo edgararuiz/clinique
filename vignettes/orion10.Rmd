@@ -13,7 +13,7 @@ has_models <- requireNamespace("mmrm", quietly = TRUE) &&
   requireNamespace("emmeans", quietly = TRUE)
 ```
 
-`simulate_ldl(n, study = "orion10")` makes up LDL cholesterol data that
+`simulate_orion10(n)` makes up LDL cholesterol data that
 looks like the ORION-10 trial. This article explains how. It lists each
 number the simulation uses, where the number came from, and what was
 assumed.
@@ -53,7 +53,7 @@ standard deviations (SDs). "Assumed" means no public source gives it.
 library(clinique)
 
 set.seed(1)
-ldl <- simulate_ldl(1561)
+ldl <- simulate_orion10(1561)
 head(ldl)
 ```
 
@@ -129,11 +129,15 @@ percent change itself. For example, a log ratio of -0.69 is a ratio of
    arms have a long right tail.
 
 The SD of the log ratio for each arm comes from the quartiles in that
-figure, read by eye:
+figure. The simulation uses SDs read by eye: 0.21 for placebo and 0.53 for
+inclisiran. Measuring the figure from its image, using the axis tick
+marks to turn pixels into percentages, later gave these quartiles:
 
-1. Placebo: quartiles about +11%, -5% and -16%, so an SD of about 0.21.
-2. Inclisiran: quartiles about -43%, -59% and -72%, so an SD of about
-   0.53.
+1. Placebo: about +14%, -3% and -17%, so an SD of about 0.23.
+2. Inclisiran: about -50%, -64% and -75%, so an SD of about 0.52.
+
+The measured SDs are within 0.02 of the ones the simulation uses, well
+inside the reading error, so the simulation keeps them.
 
 The figure only covers Day 510, so the same SD is used at every visit
 (assumed).
@@ -152,6 +156,38 @@ knitr::kable(r, digits = 2)
 
 Each subject's six log ratios are drawn together from a multivariate
 normal distribution with these SDs and correlations.
+
+### Drawing correlated values
+
+A multivariate normal draw starts from independent standard normal
+values, one per visit, and mixes them with a matrix that carries the SDs
+and correlations. There is more than one way to get that matrix, and the
+choice matters for reproducibility.
+
+A common choice is `MASS::mvrnorm()`, which gets the matrix from an
+eigendecomposition, `eigen()`. Each eigenvector can point either way, and
+different operating systems can pick different directions. Both choices
+are correct, but they turn the same random numbers into different values,
+so the same seed can give different data on macOS, Windows and Linux.
+
+The simulation uses base R's `chol()` instead. It returns the Cholesky
+factor: the upper-triangular matrix `U` with positive values on its
+diagonal such that `t(U) %*% U` equals the covariance matrix. There is
+only one such matrix, so the same seed gives the same data on every
+operating system. Other packages and functions also compute Cholesky
+factors, and some return the lower-triangular form or reorder the
+variables first, which would change the draws, so the simulation always
+uses `chol()` from base R:
+
+```{r}
+sigma <- 0.21^2 * r
+u <- chol(sigma)
+all.equal(t(u) %*% u, sigma, check.attributes = FALSE)
+
+# Three subjects' log ratios for placebo, before adding the means
+z <- matrix(rnorm(3 * 6), ncol = 6)
+z %*% u
+```
 
 Taking the exponential of a log ratio pulls the average percent change
 up. To correct for this, each log-scale mean is lowered by half the
@@ -177,8 +213,6 @@ reshape(observed, idvar = "visit", timevar = "treatment", direction = "wide")
 The SAP's MMRM, fitted with the `mmrm` package:
 
 ```{r, eval = has_models}
-ldl$subject_id <- factor(ldl$subject_id)
-
 fit <- mmrm::mmrm(
   ldl_pct_change ~ treatment * visit + ldl_baseline + us(visit | subject_id),
   data = ldl,

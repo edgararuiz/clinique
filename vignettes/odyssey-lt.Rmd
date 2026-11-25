@@ -13,7 +13,7 @@ has_models <- requireNamespace("mmrm", quietly = TRUE) &&
   requireNamespace("emmeans", quietly = TRUE)
 ```
 
-`simulate_ldl(n, study = "odyssey_lt")` makes up LDL cholesterol data that
+`simulate_odyssey_lt(n)` makes up LDL cholesterol data that
 looks like the ODYSSEY LONG TERM trial. This article explains how. It lists
 each number the simulation uses, where the number came from, and what was
 assumed. It follows the same structure as `vignette("orion10")`, so you
@@ -61,7 +61,7 @@ it.
 library(clinique)
 
 set.seed(1)
-ldl <- simulate_ldl(2341, study = "odyssey_lt")
+ldl <- simulate_odyssey_lt(2341)
 head(ldl)
 ```
 
@@ -199,7 +199,10 @@ knitr::kable(r, digits = 2)
 
 Each subject's seven log ratios are drawn together from a multivariate
 normal distribution, and each log-scale mean is lowered by half the
-variance so the expected percent change equals the target.
+variance so the expected percent change equals the target. As in every
+study, the correlated values are drawn with base R's `chol()`, so the same
+seed gives the same data on every operating system; `vignette("orion10")`
+explains why.
 
 ## Checking the means
 
@@ -222,8 +225,6 @@ It uses an unstructured covariance, REML, and Satterthwaite degrees of
 freedom. ORION-10 used Kenward-Roger instead.
 
 ```{r, eval = has_models}
-ldl$subject_id <- factor(ldl$subject_id)
-
 fit <- mmrm::mmrm(
   ldl_pct_change ~ treatment * visit +
     hefh * visit +
